@@ -4,10 +4,10 @@ import List from "./pages/list/List"
 import Single from "./pages/single/Single"
 import New from "./pages/new/New"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { stokInputs, userInputs, kirimInputs } from "./formSource"
+import { stokInputs, userInputs, kirimInputs, produkInputs } from "./formSource"
 import { useContext } from "react"
 import { AuthContext } from "./context/AuthContext"
-import { userColumns, stokColumn, kirimColumn } from "./datatablesource";
+import { userColumns, stokColumn, kirimColumn, produkColumn } from "./datatablesource";
 
 function App() {
   const { currentUser } = useContext(AuthContext)
@@ -42,6 +42,20 @@ function App() {
               <Route path="tambah" element={
                 <RequireAuth>
                   <New inputs={userInputs} title="Tambah Pengguna" database="users" />
+                </RequireAuth>} />
+            </Route>
+            <Route path="produk">
+              <Route index element={
+                <RequireAuth>
+                  <List source={produkColumn} db="products" title="Kode Produk" newPath="/produk/tambah" idPath="/produk/:Id"/>
+                </RequireAuth>} />
+              <Route path=":produkId" element={
+                <RequireAuth>
+                  <Single source={produkColumn} database="products"/>
+                </RequireAuth>} />
+              <Route path="tambah" element={
+                <RequireAuth>
+                  <New inputs={produkInputs} title="Tambah Data Produk" database="products" />
                 </RequireAuth>} />
             </Route>
             <Route path="stok">

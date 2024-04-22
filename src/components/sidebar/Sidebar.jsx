@@ -4,6 +4,7 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import StoreIcon from "@mui/icons-material/Store";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import SettingsSystemDaydreamIcon from "@mui/icons-material/SettingsSystemDaydream";
@@ -48,26 +49,34 @@ const Sidebar = () => {
           </Link>
           <p className="title">DATA</p>
           {uid === "EaMqYgiaC0cTno7ch8W5Wi3f2np2" && (
-            <Link to="/pengguna" style={{ textDecoration: "none" }}>
-              <li>
-                <PersonOutlineOutlinedIcon className="icon" />
-                <span>Pengguna</span>
-              </li>
-            </Link>
+            <div>
+              <a href="/pengguna" style={{ textDecoration: "none" }}>
+                <li>
+                  <PersonOutlineOutlinedIcon className="icon" />
+                  <span>Pengguna</span>
+                </li>
+              </a>
+              <a href="/produk" style={{ textDecoration: "none" }}>
+                <li>
+                  <CategoryOutlinedIcon className="icon" />
+                  <span>Produk</span>
+                </li>
+              </a>
+            </div>
           )}
 
-          <Link to="/stok" style={{ textDecoration: "none" }}>
+          <a href="/stok" style={{ textDecoration: "none" }}>
             <li>
               <StoreIcon className="icon" />
               <span>Stok</span>
             </li>
-          </Link>
-          <Link to="/kirim" style={{ textDecoration: "none" }}>
+          </a>
+          <a href="/kirim" style={{ textDecoration: "none" }}>
             <li>
-              <LocalShippingIcon className="icon" />
-              <span>Terkirim</span>
+              <StoreIcon className="icon" />
+              <span>Kirim</span>
             </li>
-          </Link>
+          </a>
           {/* <li>
             <ShoppingBagIcon className="icon" />
             <span>Orders</span>

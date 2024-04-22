@@ -4,7 +4,6 @@ import Navbar from "../../components/navbar/Navbar";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
 import { useEffect, useState } from "react";
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -15,16 +14,13 @@ import {
   query,
   serverTimestamp,
   setDoc,
-  updateDoc,
-  where,
 } from "firebase/firestore";
 import { auth, db, storage } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import {
   ref,
   uploadBytesResumable,
-  getDownloadURL,
-  deleteObject,
+  getDownloadURL
 } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 
@@ -32,18 +28,20 @@ const New = ({ inputs, title, database }) => {
   const [file, setFile] = useState("");
   const [data, setData] = useState({});
   const [percent, setPercent] = useState(null);
-  const [firebaseId, setFirebaseId] = useState(null);
   const navigate = useNavigate();
   const [fetching, setFetching] = useState(false);
-  // const [stok, setStok] = useState([null]);
+  const [productId, setProductId] = useState("");
 
   const handleButtonClick = async () => {
     setFetching(true);
     setTimeout(async () => {
-      await fetchIdFromFirebase();
-      await getStok();
+      const id = await fetchIdFromFirebase();
+      setData((prevData) => ({
+        ...prevData,
+        id, // Set the fetched id to the "id" property in data state
+      }));
       setFetching(false);
-    }, 10000); // 10 seconds delay
+    }, 10000); // delay 10 seconds
   };
 
   useEffect(() => {
@@ -97,27 +95,57 @@ const New = ({ inputs, title, database }) => {
     const value = e.target.value;
 
     setData({ ...data, [id]: value });
+    if (id === "id" && database === "products") {
+      setProductId(value); // Update the documentId state with the input value
+    }
   };
 
   const fetchIdFromFirebase = async () => {
     try {
       const querySnapshot = await getDocs(
-        query(
-          collection(db, "products"),
-          orderBy("timeStamp", "desc"),
-          limit(1)
-        )
+        query(collection(db, "tags"), orderBy("timeStamp", "desc"), limit(1))
       );
       if (!querySnapshot.empty) {
         const newestId = querySnapshot.docs[0].id;
-        setFirebaseId(newestId);
         console.log(newestId);
+
+        const firstEightDigits = newestId.slice(0, 8);
+        console.log("First Eight Digits:", firstEightDigits);
+
+        const productsData = await fetchDataFromProducts(firstEightDigits);
+        console.log("Products Data:", productsData);
+
+        setData({ ...data, ...productsData });
+
         // Call getStok function with newestId
         await getStok(newestId);
+
+        await fetchDataFromProducts(firstEightDigits);
         return newestId;
       }
     } catch (error) {
       console.error("Error getting newest ID: ", error);
+    }
+  };
+
+  const fetchDataFromProducts = async (firstEightDigits) => {
+    try {
+      // Construct a query to fetch data from the "products" collection
+      const productDocRef = doc(db, "products", firstEightDigits);
+      const productSnapshot = await getDoc(productDocRef);
+
+      if (productSnapshot.exists()) {
+        // Extract the data from the query snapshot
+        const productsData = productSnapshot.data();
+        console.log("Products Data:", productsData);
+        return productsData;
+      } else {
+        console.log("No matching document found in 'products' collection.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching data from 'products' collection:", error);
+      return [];
     }
   };
 
@@ -129,7 +157,6 @@ const New = ({ inputs, title, database }) => {
       if (stokSnapshot.exists()) {
         const stokData = stokSnapshot.data();
         console.log("Stok Data:", stokData);
-        // setStok(stokData);
         return stokData;
       } else {
         console.log("No matching document found in 'stok' collection.");
@@ -143,28 +170,13 @@ const New = ({ inputs, title, database }) => {
 
   const deleteStokData = async (stokId) => {
     try {
-      // Fetch the document from the database
+      // Fetch stok document from the database
       const docRef = doc(db, "stok", stokId);
       const docSnapshot = await getDoc(docRef);
       if (docSnapshot.exists()) {
-        // // Retrieve the value of the "img" field
-        // const imgNameValue = docSnapshot.data().imgName;
-        // // Create a reference to the file to delete
-        // const deleteRef = ref(storage, imgNameValue);
-        // // Delete the file
-        // deleteObject(deleteRef)
-        //   .then(() => {
-        //     console.log("file deleted");
-        //   })
-        //   .catch((error) => {
-        //     console.log(error);
-        //   });
 
-        // Delete the document from the database
+        // Delete stok document from the database
         await deleteDoc(docRef);
-
-        // Update the data array, filtering out the deleted document
-        // setData(data.filter((item) => item.id !== id));
       } else {
         console.log("Document does not exist");
       }
@@ -184,6 +196,12 @@ const New = ({ inputs, title, database }) => {
           data.password
         );
         await setDoc(doc(db, database, res.user.uid), {
+          ...data,
+          timeStamp: serverTimestamp(),
+        });
+      }
+      if (database === "products") {
+        await setDoc(doc(db, database, productId), {
           ...data,
           timeStamp: serverTimestamp(),
         });
@@ -255,32 +273,11 @@ const New = ({ inputs, title, database }) => {
                   />
                 </div>
               )}
-              {database === "kirim" && (
+              {database !== "users" && database !== "products" && (
                 <div className="getData">
-                  <div className="idData">
-                    <span>TagID:&nbsp;</span>
-                    {firebaseId && (
-                      <div className="data">
-                        <span>{firebaseId}&nbsp;</span>
-                      </div>
-                    )}
-
-                    <button onClick={handleButtonClick} disabled={fetching}>
-                      {fetching ? "Memindai..." : "Pindai Tag ID"}
-                    </button>
-                  </div>
-                  {/* <div className="stokData">
-                    <span>Nama Barang:&nbsp;</span>
-                    {stok ? (
-                      <span className="visible">{stok.product}&nbsp;</span>
-                    ) : (
-                      <span className="invisible">Product Not Available</span>
-                    )}
-
-                    <button onClick={handleButtonClick} disabled={fetching}>
-                      {fetching ? "Memindai..." : "Ambil Data Stok"}
-                    </button>
-                  </div> */}
+                  <button onClick={handleButtonClick} disabled={fetching}>
+                    {fetching ? "Memindai..." : "Pindai Tag ID"}
+                  </button>
                 </div>
               )}
               {inputs.map((input) => (
@@ -290,6 +287,7 @@ const New = ({ inputs, title, database }) => {
                     id={input.id}
                     type={input.type}
                     placeholder={input.placeholder}
+                    value={data[input.id] || ""} // Autofill input value from data state
                     onChange={handleInput}
                   />
                 </div>

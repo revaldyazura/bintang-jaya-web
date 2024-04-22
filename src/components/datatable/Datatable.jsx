@@ -79,19 +79,22 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
       // Fetch the document from the database
       const docRef = doc(db, database, id);
       const docSnapshot = await getDoc(docRef);
+      console.log(docSnapshot)
       if (docSnapshot.exists()) {
         // Retrieve the value of the "img" field
         const imgNameValue = docSnapshot.data().imgName;
-        // Create a reference to the file to delete
-        const deleteRef = ref(storage, imgNameValue);
-        // Delete the file
-        deleteObject(deleteRef)
-          .then(() => {
-            console.log("file deleted");
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        if (imgNameValue) {
+          // Create a reference to the file to delete
+          const deleteRef = ref(storage, imgNameValue);
+          // Delete the file
+          deleteObject(deleteRef)
+            .then(() => {
+              console.log("file deleted");
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
 
         // Delete the document from the database
         await deleteDoc(docRef);
@@ -125,6 +128,14 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
               Kirim
             </div>} */}
             {database === "users" && (
+              <div
+                className="deleteButton"
+                onClick={() => handleUserDelete(params.row.id)}
+              >
+                Hapus
+              </div>
+            )}
+            {database === "products" && (
               <div
                 className="deleteButton"
                 onClick={() => handleUserDelete(params.row.id)}
@@ -202,10 +213,11 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
     },
     "& .MuiDataGrid-columnHeader": {
       // borderRight: `1px solid #303030`,
-      backgroundColor: "#ff9359",
+      backgroundColor: "#ff9359"
     },
     "& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell": {
       // borderBottom: `1px solid #303030`,
+      justifyContent: "center"
       // borderRight: `1px solid #303030`,
     },
     "& .MuiDataGrid-cell": {
@@ -214,6 +226,9 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
     },
     "& .MuiPaginationItem-root": {
       borderRadius: 0,
+    },
+    "& .MuiDataGrid-columnHeaderTitleContainer": {
+      justifyContent: "center"
     },
     ...customCheckbox(theme),
   }));

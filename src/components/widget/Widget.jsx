@@ -14,12 +14,7 @@ import { Link } from "react-router-dom";
 
 const Widget = ({ type, idPath }) => {
   const [amount, setAmount] = useState(null);
-  const [diff, setDiff] = useState(null);
   let data;
-
-  //temp
-  // const amount = 100;
-  // const diff = 20;
 
   switch (type) {
     case "user":
@@ -68,23 +63,6 @@ const Widget = ({ type, idPath }) => {
             style={{
               color: "green",
               backgroundColor: "rgba(0, 128, 0, 0.2)",
-            }}
-          />
-        ),
-      };
-      break;
-    case "balance":
-      data = {
-        title: "BALANCE",
-        isMoney: true,
-        link: "See details",
-        query: "balances",
-        icon: (
-          <AccountBalanceWalletOutlinedIcon
-            className="icon"
-            style={{
-              color: "purple",
-              backgroundColor: "rgba(128, 0, 128, 0.2)",
             }}
           />
         ),

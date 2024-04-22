@@ -11,7 +11,7 @@ export const userColumns = [
   //   }
   // },
   {
-    field: "user", headerName: "Nama", flex: 0.1, 
+    field: "user", headerName: "Nama", flex: 0.1,
     renderCell: (params) => {
       return (
         <div className="cellWithImg">
@@ -34,6 +34,16 @@ export const userColumns = [
   // },
 ];
 
+export const produkColumn = [
+  { field: "id", headerName: "Kode Produk", flex: 0.1, minWidth: 100 },
+
+  { field: "product", headerName: "Barang", flex: 0.1, minWidth: 150 },
+  { field: "detail", headerName: "Detail Warna", flex: 0.1, minWidth: 100 },
+  { field: "color", headerName: "Kode Warna", flex: 0.1, minWidth: 100 },
+  { field: "stock", headerName: "Stok", flex: 0.1, minWidth: 30 },
+  { field: "unit", headerName: "Satuan", flex: 0.1, minWidth: 30 },
+  { field: "timeStamp", headerName: "Waktu Input", flex: 0.1, minWidth: 450 },
+];
 export const stokColumn = [
   { field: "id", headerName: "ID", flex: 0.1, minWidth: 180 },
 
@@ -47,7 +57,7 @@ export const stokColumn = [
       )
     }
   },
-  { field: "detail", headerName: "Detail Warna", flex: 0.1, minWidth: 180 },
+  { field: "detail", headerName: "Detail Warna", flex: 0.1, minWidth: 100 },
   { field: "color", headerName: "Kode Warna", flex: 0.1, minWidth: 100 },
   { field: "stock", headerName: "Stok", flex: 0.1, minWidth: 30 },
   { field: "unit", headerName: "Satuan", flex: 0.1, minWidth: 30 },
