@@ -3,20 +3,37 @@ import "./video.scss";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import { colorInputs } from "../../colorSource";
+import { SketchPicker } from "react-color";
+import namer from 'color-namer';
 
 const Video = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [inputs, setInputs] = useState(colorInputs);
+  const [currentColor, setCurrentColor] = useState();
+  const [colorName, setColorName] = useState("");
 
+  const handleChange = (color) => {
+    setCurrentColor(color.rgb);
+    // const name = getColorNameFromRGB(color.rgb.r, color.rgb.g, color.rgb.b);
+    //     setColorName(name);
+  };
+
+  const getColorNameFromRGB = (r, g, b) => {
+    let rgb = `${r},${g},${b}`;
+    let names = namer(rgb, { pick: ['ntc'] }); // using 'ntc' name set
+    return names.ntc[0].name;
+  };
+  
   const handleColor = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = {
+      // colorName: colorName,
       colorName: formData.get("colorname"),
       bgrValues: [
-        parseInt(formData.get("biru")),
-        parseInt(formData.get("hijau")),
-        parseInt(formData.get("merah")),
+        currentColor.b,
+        currentColor.g,
+        currentColor.r,
       ],
     };
 
@@ -37,6 +54,15 @@ const Video = () => {
       console.error("Network error:", error);
     }
   };
+
+  const pickerStyles = {
+    default: {
+      picker: {
+
+      },
+    },
+  };
+
   const handleReset = async () => {
     try {
       const response = await fetch("/reset_colors", {
@@ -55,17 +81,17 @@ const Video = () => {
     }
   };
 
-  const getLabel = (label) => {
-    if (label === "Nama Warna") {
-      return "nama";
-    } else if (label === "Biru") {
-      return "biru";
-    } else if (label === "Hijau") {
-      return "hijau";
-    } else if (label === "Merah") {
-      return "merah";
-    }
-  };
+  // const getLabel = (label) => {
+  //   if (label === "Nama Warna:") {
+  //     return "nama";
+  //   } else if (label === "Biru") {
+  //     return "biru";
+  //   } else if (label === "Hijau") {
+  //     return "hijau";
+  //   } else if (label === "Merah") {
+  //     return "merah";
+  //   }
+  // };
 
   const handleActivate = async () => {
     try {
@@ -113,7 +139,7 @@ const Video = () => {
         <form onSubmit={handleColor} id="formColor">
           {inputs.map((input) => (
             <div className="formInput" key={input.id}>
-              <label className={getLabel(input.label)}>{input.label}</label>
+              <label >{input.label}</label>
               <input
                 id={input.id}
                 type={input.type}
@@ -124,6 +150,14 @@ const Video = () => {
             </div>
           ))}
         </form>
+        <div className="colorPicker">
+          <SketchPicker
+            color={currentColor}
+            onChangeComplete={handleChange}
+            styles={pickerStyles}
+            disableAlpha
+          />
+        </div>
         <div className="button">
           <button onClick={handleActivate} id="activate">
             Aktifkan Kamera

@@ -4,6 +4,7 @@ import Navbar from "../../components/navbar/Navbar";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
 import { useEffect, useState } from "react";
 import {
+  Timestamp,
   collection,
   deleteDoc,
   doc,
@@ -14,14 +15,11 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  where,
 } from "firebase/firestore";
 import { auth, db, storage } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL
-} from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 
 const New = ({ inputs, title, database }) => {
@@ -31,17 +29,25 @@ const New = ({ inputs, title, database }) => {
   const navigate = useNavigate();
   const [fetching, setFetching] = useState(false);
   const [productId, setProductId] = useState("");
+  const [emptyResult, setEmptyResult] = useState(false);
 
   const handleButtonClick = async () => {
     setFetching(true);
     setTimeout(async () => {
       const id = await fetchIdFromFirebase();
-      setData((prevData) => ({
-        ...prevData,
-        id, // Set the fetched id to the "id" property in data state
-      }));
+      if (!id) {
+        setEmptyResult(true);
+      } else {
+        setData((prevData) => ({
+          ...prevData,
+          id, // Set the fetched id to the "id" property in data state
+        }));
+      }
       setFetching(false);
     }, 10000); // delay 10 seconds
+  };
+  const handleClosePopup = () => {
+    setEmptyResult(false); // Close the pop-up message
   };
 
   useEffect(() => {
@@ -102,17 +108,25 @@ const New = ({ inputs, title, database }) => {
 
   const fetchIdFromFirebase = async () => {
     try {
-      const querySnapshot = await getDocs(
-        query(collection(db, "tags"), orderBy("timeStamp", "desc"), limit(1))
+      const today = new Date();
+      const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+      const todayTimestamp = Timestamp.fromDate(startOfDay);
+      console.log(startOfDay, todayTimestamp);
+      const queryTag = query(
+        collection(db, "tags"),
+        where("timeStamp", ">=", todayTimestamp),
+        orderBy("timeStamp", "desc"),
+        limit(1)
       );
+      const querySnapshot = await getDocs(queryTag);
       if (!querySnapshot.empty) {
         const newestId = querySnapshot.docs[0].id;
         console.log(newestId);
 
-        const firstEightDigits = newestId.slice(0, 8);
-        console.log("First Eight Digits:", firstEightDigits);
+        const firstSixteenDigits = newestId.slice(0, 16);
+        console.log("First Sixteen Digits:", firstSixteenDigits);
 
-        const productsData = await fetchDataFromProducts(firstEightDigits);
+        const productsData = await fetchDataFromProducts(firstSixteenDigits);
         console.log("Products Data:", productsData);
 
         setData({ ...data, ...productsData });
@@ -120,7 +134,7 @@ const New = ({ inputs, title, database }) => {
         // Call getStok function with newestId
         await getStok(newestId);
 
-        await fetchDataFromProducts(firstEightDigits);
+        await fetchDataFromProducts(firstSixteenDigits);
         return newestId;
       }
     } catch (error) {
@@ -128,9 +142,11 @@ const New = ({ inputs, title, database }) => {
     }
   };
 
-  const fetchDataFromProducts = async (firstEightDigits) => {
+  const fetchDataFromProducts = async (firstSixteenDigits) => {
     try {
       // Construct a query to fetch data from the "products" collection
+      const firstEightDigits = firstSixteenDigits.slice(0, 8);
+      console.log(firstEightDigits);
       const productDocRef = doc(db, "products", firstEightDigits);
       const productSnapshot = await getDoc(productDocRef);
 
@@ -138,6 +154,60 @@ const New = ({ inputs, title, database }) => {
         // Extract the data from the query snapshot
         const productsData = productSnapshot.data();
         console.log("Products Data:", productsData);
+        const twoDigitsColor = firstSixteenDigits.slice(8, 10);
+        const twoDigitsDetails = firstSixteenDigits.slice(10, 12);
+        const twoDigitsSize = firstSixteenDigits.slice(12, 14);
+        const twoDigitsCones = firstSixteenDigits.slice(14, 16);
+        console.log(
+          twoDigitsColor,
+          twoDigitsDetails,
+          twoDigitsSize,
+          twoDigitsCones
+        );
+        // const colorDocRef = doc(db, "products", firstEightDigits, sixDigitsColor, twoDigitsColorDetail)
+        const colorDocRef = doc(productDocRef, "warna", twoDigitsColor);
+        const colorSnapshot = await getDoc(colorDocRef);
+        if (colorSnapshot.exists()) {
+          const colorData = colorSnapshot.data();
+
+          console.log("color data: ", colorData);
+          const detailDocRef = doc(colorDocRef, "details", twoDigitsDetails);
+          const detailSnapshot = await getDoc(detailDocRef);
+          if (detailSnapshot.exists()) {
+            const detailData = detailSnapshot.data();
+            console.log("Details Data: ", detailData);
+            const sizeDocRef = doc(detailDocRef, "ukuran", twoDigitsSize);
+            const sizeSnapshot = await getDoc(sizeDocRef);
+            if (sizeSnapshot.exists()) {
+              const sizeData = sizeSnapshot.data();
+              console.log("Size data: ", sizeData);
+
+              const coneDocRef = doc(sizeDocRef, "cones", twoDigitsCones);
+              const coneSnapshot = await getDoc(coneDocRef);
+              if (coneSnapshot.exists()) {
+                const coneData = coneSnapshot.data();
+                console.log("cones data: ", coneData);
+
+                const fetchedData = {
+                  ...productsData,
+                  ...colorData,
+                  ...detailData,
+                  ...sizeData,
+                  ...coneData,
+                };
+                return fetchedData;
+              } else {
+                console.log("no doc found in cones collection");
+              }
+            } else {
+              console.log("no doc found in size collection");
+            }
+          } else {
+            console.log("no doc found in details collection");
+          }
+        } else {
+          console.log("no doc found in color collection");
+        }
         return productsData;
       } else {
         console.log("No matching document found in 'products' collection.");
@@ -174,7 +244,6 @@ const New = ({ inputs, title, database }) => {
       const docRef = doc(db, "stok", stokId);
       const docSnapshot = await getDoc(docRef);
       if (docSnapshot.exists()) {
-
         // Delete stok document from the database
         await deleteDoc(docRef);
       } else {
@@ -201,9 +270,39 @@ const New = ({ inputs, title, database }) => {
         });
       }
       if (database === "products") {
-        await setDoc(doc(db, database, productId), {
-          ...data,
+        const idProduct = productId.substring(0, 8); // 8 char product ID
+        const idColor = productId.substring(8, 10); // 2 char color ID
+        const idDetails = productId.substring(10, 12);
+        const idSize = productId.slice(12, 14);
+        const idCones = productId.slice(14, 16);
+
+        const productRef = doc(db, "products", idProduct);
+        await setDoc(productRef, {
+          product: data.product,
           timeStamp: serverTimestamp(),
+        });
+
+        // Set warna subdocument
+        const warnaRef = doc(productRef, "warna", idColor);
+        await setDoc(warnaRef, {
+          color: data.color
+        });
+
+        // Set details subdocument within warna
+        const detailsRef = doc(warnaRef, "details", idDetails);
+        await setDoc(detailsRef, {
+          specific: data.specific,
+          number: data.number,
+          stock: data.stock,
+        });
+        const sizeRef = doc(detailsRef, "ukuran", idSize);
+        await setDoc(sizeRef, {
+          thickness: data.thickness,
+          weight: data.weight
+        });
+        const coneRef = doc(sizeRef, "cones", idCones);
+        await setDoc(sizeRef, {
+          height: data.height
         });
       }
       if (database === "stok") {
@@ -278,6 +377,14 @@ const New = ({ inputs, title, database }) => {
                   <button onClick={handleButtonClick} disabled={fetching}>
                     {fetching ? "Memindai..." : "Pindai Tag ID"}
                   </button>
+                </div>
+              )}
+              {emptyResult && (
+                <div className="popup">
+                  <div className="popup-inner">
+                    <p>Data tidak ditemukan</p>
+                    <button onClick={handleClosePopup}>Kembali</button>
+                  </div>
                 </div>
               )}
               {inputs.map((input) => (

@@ -15,7 +15,7 @@ function App() {
     return currentUser ? (children) : <Navigate to="/login" />
   }
 
-  const handleUid = async () =>{
+  const handleUid = async () => {
     return currentUser.uid;
   }
 
@@ -33,11 +33,11 @@ function App() {
             <Route path="pengguna">
               <Route index element={
                 <RequireAuth>
-                  <List source={userColumns} db="users" title="Pengguna" newPath="/pengguna/tambah" idPath="/pengguna/:Id"/>
+                  <List source={userColumns} db="users" title="Pengguna" newPath="/pengguna/tambah" idPath="/pengguna/:Id" />
                 </RequireAuth>} />
               <Route path=":userId" element={
                 <RequireAuth>
-                  <Single source={userColumns} database="users"/>
+                  <Single source={userColumns} database="users" />
                 </RequireAuth>} />
               <Route path="tambah" element={
                 <RequireAuth>
@@ -47,11 +47,11 @@ function App() {
             <Route path="produk">
               <Route index element={
                 <RequireAuth>
-                  <List source={produkColumn} db="products" title="Kode Produk" newPath="/produk/tambah" idPath="/produk/:Id"/>
+                  <List source={produkColumn} db="products" title="Produk" newPath="/produk/tambah" idPath="/produk/:Id" />
                 </RequireAuth>} />
               <Route path=":produkId" element={
                 <RequireAuth>
-                  <Single source={produkColumn} database="products"/>
+                  <Single source={produkColumn} database="products" />
                 </RequireAuth>} />
               <Route path="tambah" element={
                 <RequireAuth>
@@ -61,11 +61,11 @@ function App() {
             <Route path="stok">
               <Route index element={
                 <RequireAuth>
-                  <List source={stokColumn} db="stok" title="Stok" newPath="/stok/tambah" idPath="/stok/:Id"/>
+                  <List source={stokColumn} db="stok" title="Stok" newPath="/stok/tambah" idPath="/stok/:Id" />
                 </RequireAuth>} />
               <Route path=":stokId" element={
                 <RequireAuth>
-                  <Single source={stokColumn} database="stok"/>
+                  <Single source={stokColumn} database="stok" />
                 </RequireAuth>} />
               <Route path="tambah" element={
                 <RequireAuth>
@@ -75,11 +75,11 @@ function App() {
             <Route path="kirim">
               <Route index element={
                 <RequireAuth>
-                  <List source={kirimColumn} db="kirim" title="Dikirim" newPath="/kirim/tambah" idPath="/kirim/:Id"/>
+                  <List source={kirimColumn} db="kirim" title="Dikirim" newPath="/kirim/tambah" idPath="/kirim/:Id" />
                 </RequireAuth>} />
               <Route path=":kirimId" element={
                 <RequireAuth>
-                  <Single source={kirimColumn} database="kirim"/>
+                  <Single source={kirimColumn} database="kirim" />
                 </RequireAuth>} />
               <Route path="tambah" element={
                 <RequireAuth>

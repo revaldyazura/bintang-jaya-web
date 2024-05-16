@@ -1,6 +1,6 @@
 import "./datatable.scss";
 import { DataGrid } from "@mui/x-data-grid";
-import { Link, NuseNavigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import {
   collection,
@@ -23,27 +23,13 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
   const storage = getStorage();
 
   useEffect(() => {
-    // const fetchData = async () => {
-    //   let list = [];
-    //   try {
-    //     const querySnapshot = await getDocs(collection(db, "users"));
-    //     querySnapshot.forEach((doc) => {
-    //       list.push({ id: doc.id, ...doc.data() });
-    //     });
-    //     setData(list);
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // };
-    // fetchData();
-
     // LISTEN REAL-TIME
     const unsub = onSnapshot(
       collection(db, database),
       (snapShot) => {
         let list = [];
         snapShot.docs.forEach((doc) => {
-          if (database !== "users") {
+          if (database === "stok" || database === "kirim") {
             const data = doc.data();
             const id = doc.id;
             const createdAtTimestamp = data.timeStamp; // Access the timestamp field
@@ -51,8 +37,77 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
             list.push({ id, ...data, timeStamp: createdAtDate });
           } else if (database === "users") {
             list.push({ id: doc.id, ...doc.data() });
+          } else if (database === "products") {
+            const productData = doc.data();
+            const productId = doc.id;
+
+            // Nested listener for 'warna'
+            const warnaSub = onSnapshot(
+              collection(db, `products/${productId}/warna`),
+              (warnaSnapshot) => {
+                warnaSnapshot.docs.forEach((warnaDoc) => {
+                  const warnaData = warnaDoc.data();
+                  const warnaId = warnaDoc.id;
+
+                  const detailSubs = onSnapshot(
+                    collection(
+                      db,
+                      `products/${productId}/warna/${warnaId}/details`
+                    ),
+                    (detailSnapshot) => {
+                      detailSnapshot.docs.forEach((detailDoc) => {
+                        const detailData = detailDoc.data()
+                        const detailId = detailDoc.id;
+
+                        const sizeSubs = onSnapshot(
+                          collection(
+                            db,
+                            `products/${productId}/warna/${warnaId}/details/${detailId}/ukuran`
+                          ),
+                          (sizeSnapshot) => {
+                            sizeSnapshot.docs.forEach((sizeDoc) => {
+                              const sizeData = sizeDoc.data();
+                              const sizeId = sizeDoc.id;
+
+                              const coneSubs = onSnapshot(
+                                collection(
+                                  db,
+                                  `products/${productId}/warna/${warnaId}/details/${detailId}/ukuran/${sizeId}/cones`
+                                ),
+                                (coneSnapshot) => {
+                                  coneSnapshot.docs.forEach((coneDoc) => {
+                                    const coneData = coneDoc.data()
+                                    const coneId = coneDoc.id;
+                                    const combinedId = `${productId}${warnaId}${detailId}${sizeId}${coneId}`;
+                                    const completeData = {
+                                      id: combinedId,
+                                      ...productData, ...warnaData, ...detailData, ...sizeData, ...coneData
+                                    };
+                                    console.log(completeData);
+                                    // Update list with new data structure
+                                    list = list.filter(
+                                      (item) => item.id !== combinedId
+                                    ); // Remove old entry if exists
+                                    list.push(completeData);
+                                    setData([...list]); // Update state to trigger re-render
+                                  });
+                                }
+                              );
+                            });
+                          }
+                        );
+                      });
+                    }
+                  );
+                });
+              },
+              (error) => {
+                console.log(error);
+              }
+            );
           }
         });
+
         setData(list);
       },
       (error) => {
@@ -79,7 +134,7 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
       // Fetch the document from the database
       const docRef = doc(db, database, id);
       const docSnapshot = await getDoc(docRef);
-      console.log(docSnapshot)
+      console.log(docSnapshot);
       if (docSnapshot.exists()) {
         // Retrieve the value of the "img" field
         const imgNameValue = docSnapshot.data().imgName;
@@ -213,11 +268,12 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
     },
     "& .MuiDataGrid-columnHeader": {
       // borderRight: `1px solid #303030`,
-      backgroundColor: "#ff9359"
+      backgroundColor: "#ff9359",
+      textWrap: "pretty",
     },
     "& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell": {
       // borderBottom: `1px solid #303030`,
-      justifyContent: "center"
+      justifyContent: "center",
       // borderRight: `1px solid #303030`,
     },
     "& .MuiDataGrid-cell": {
@@ -228,7 +284,7 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
       borderRadius: 0,
     },
     "& .MuiDataGrid-columnHeaderTitleContainer": {
-      justifyContent: "center"
+      justifyContent: "center",
     },
     ...customCheckbox(theme),
   }));

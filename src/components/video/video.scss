@@ -6,71 +6,53 @@
   box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
   border-radius: 10px;
 
-  .left,
-  .center,
-  .right {
+  .center {
+    align-items: center;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
-    form {
-      padding-right: 90px;
+    .formInput {
       display: flex;
-      flex-direction: column;
-      gap: 60px;
-      top: 30px;
       position: relative;
-      .formInput {
-        height: 30px;
-        // width: 439px;
-        // padding: 0px;
+      justify-content: center;
+      gap: 17px;
+      align-items: center;
+      label {
+        text-align: left;
+        font-size: 20px;
+        font-weight: bold;
         display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        gap: 17px;
-        position: relative;
-        label {
-          text-align: left;
-          font-size: 20px;
-          font-weight: bold;
-          top: 20px;
-          left: 0px;
-          position: absolute;
-          width: 85px;
-          display: flex;
-          &.nama {
-            color: #8d96cf;
-          }
+        color: #8d96cf;
+        // &.nama {
+        //   color: #8d96cf;
+        // }
 
-          &.merah {
-            color: crimson;
-          }
+        // &.merah {
+        //   color: crimson;
+        // }
 
-          &.hijau {
-            color: green;
-          }
-          &.biru {
-            color: royalblue;
-          }
-        }
-        input {
-          background-color: #ffffff;
-          height: 60px;
-          -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
-          box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-          border-radius: 10px;
-          outline: none;
-          border: 0px solid rgba(0, 0, 0, 0.10000000149011612);
-          top: 0px;
-          left: 150px;
-          position: absolute;
-          text-align: center;
-          font-weight: 500;
-          font-size: 16px;
-          
-        }
+        // &.hijau {
+        //   color: green;
+        // }
+        // &.biru {
+        //   color: royalblue;
+        // }
       }
+      input {
+        background-color: #ffffff;
+        height: 60px;
+        -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+        box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+        border-radius: 10px;
+        outline: none;
+        border: 0px solid rgba(0, 0, 0, 0.10000000149011612);
+        text-align: center;
+        font-weight: 500;
+        font-size: 16px;
+      }
+    }
+    .colorPicker {
+      padding: 10px;
     }
     .button {
       flex-direction: row;
@@ -113,6 +95,13 @@
         }
       }
     }
+  }
+
+  .left,
+  .right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     .cam {
       img {

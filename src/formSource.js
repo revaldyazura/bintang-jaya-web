@@ -27,9 +27,9 @@ export const userInputs = [
 export const produkInputs = [
   {
     id: "id",
-    label: "Kode Produk",
+    label: "Kode Barang",
     type: "text",
-    placeholder: "07EE00CE"
+    placeholder: "1100EE0006000001"
   },
   {
     id: "product",
@@ -38,28 +38,47 @@ export const produkInputs = [
     placeholder: "Benang Obras"
   },
   {
-    id: "detail",
+    id: "specific",
     label: "Detail Warna",
     type: "text",
-    placeholder: "Hijau Daun"
+    placeholder: "Pink Terang"
   },
   {
     id: "color",
-    label: "Kode warna",
+    label: "Warna",
     type: "text",
-    placeholder: "266"
+    placeholder: "Pink"
   },
   {
     id: "stock",
     label: "Stok",
     type: "text",
-    placeholder: "1"
+    placeholder: "1 Bal"
   },
   {
-    id: "unit",
-    label: "Satuan",
+    id: "number",
+    label: "Nomor Warna",
     type: "text",
-    placeholder: "bal / pcs"
+    placeholder: "2050"
+  },
+  
+  {
+    id: "thickness",
+    label: "Tebal/satuan",
+    type: "text",
+    placeholder: "tipis"
+  },
+  {
+    id: "weight",
+    label: "Berat/satuan",
+    type: "text",
+    placeholder: "160 gram"
+  },
+  {
+    id: "height",
+    label: "Tinggi Cones",
+    type: "text",
+    placeholder: "25 cm"
   },
 
 ]
@@ -77,28 +96,46 @@ export const stokInputs = [
     placeholder: "Benang Obras"
   },
   {
-    id: "detail",
+    id: "specific",
     label: "Detail Warna",
     type: "text",
     placeholder: "Hijau Daun"
   },
   {
     id: "color",
-    label: "Kode warna",
+    label: "Warna",
     type: "text",
-    placeholder: "266"
+    placeholder: "Hijau"
   },
   {
     id: "stock",
     label: "Stok",
     type: "text",
-    placeholder: "1"
+    placeholder: "1 Bal"
   },
   {
-    id: "unit",
-    label: "Satuan",
+    id: "number",
+    label: "Nomor Warna",
     type: "text",
-    placeholder: "bal / pcs"
+    placeholder: "2112"
+  },
+  {
+    id: "thickness",
+    label: "Tebal/satuan",
+    type: "text",
+    placeholder: "tipis"
+  },
+  {
+    id: "weight",
+    label: "Berat/satuan",
+    type: "text",
+    placeholder: "160 gram"
+  },
+  {
+    id: "height",
+    label: "Tinggi Cones",
+    type: "text",
+    placeholder: "25 cm"
   },
 
 ]
@@ -124,21 +161,39 @@ export const kirimInputs = [
   },
   {
     id: "color",
-    label: "Kode warna",
+    label: "Warna",
     type: "text",
-    placeholder: "266"
+    placeholder: "Hijau"
   },
   {
     id: "stock",
     label: "Stok",
     type: "text",
-    placeholder: "1"
+    placeholder: "1 Bal"
   },
   {
-    id: "unit",
-    label: "Satuan",
+    id: "number",
+    label: "Nomor Warna",
     type: "text",
-    placeholder: "bal / pcs"
+    placeholder: "2112"
+  },
+  {
+    id: "thickness",
+    label: "Tebal/satuan",
+    type: "text",
+    placeholder: "tipis"
+  },
+  {
+    id: "weight",
+    label: "Berat/satuan",
+    type: "text",
+    placeholder: "160 gram"
+  },
+  {
+    id: "height",
+    label: "Tinggi Cones",
+    type: "text",
+    placeholder: "25 cm"
   },
   {
     id: "client",
