@@ -51,7 +51,8 @@ const Sidebar = () => {
           </li>
             </NavLink>
           <p className="title">DATA</p>
-          {uid === "EaMqYgiaC0cTno7ch8W5Wi3f2np2" && (
+          {(uid === "EaMqYgiaC0cTno7ch8W5Wi3f2np2" ||
+            uid === "RedXGnEg9cTjjV8i6lKC0yQVf3H3") && (
             <NavLink
               onClick={() => handleFullPageRefresh("/produk")}
               to="/produk"

@@ -49,39 +49,43 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
                   const warnaData = warnaDoc.data();
                   const warnaId = warnaDoc.id;
 
-                  const detailSubs = onSnapshot(
+                  const sizeSubs = onSnapshot(
                     collection(
                       db,
-                      `products/${productId}/warna/${warnaId}/details`
+                      `products/${productId}/warna/${warnaId}/ukuran`
                     ),
-                    (detailSnapshot) => {
-                      detailSnapshot.docs.forEach((detailDoc) => {
-                        const detailData = detailDoc.data()
-                        const detailId = detailDoc.id;
+                    (sizeSnapshot) => {
+                      sizeSnapshot.docs.forEach((sizeDoc) => {
+                        const sizeData = sizeDoc.data();
+                        const sizeId = sizeDoc.id;
 
-                        const sizeSubs = onSnapshot(
+                        const coneSubs = onSnapshot(
                           collection(
                             db,
-                            `products/${productId}/warna/${warnaId}/details/${detailId}/ukuran`
+                            `products/${productId}/warna/${warnaId}/ukuran/${sizeId}/cones`
                           ),
-                          (sizeSnapshot) => {
-                            sizeSnapshot.docs.forEach((sizeDoc) => {
-                              const sizeData = sizeDoc.data();
-                              const sizeId = sizeDoc.id;
+                          (coneSnapshot) => {
+                            coneSnapshot.docs.forEach((coneDoc) => {
+                              const coneData = coneDoc.data();
+                              const coneId = coneDoc.id;
 
-                              const coneSubs = onSnapshot(
+                              const detailSubs = onSnapshot(
                                 collection(
                                   db,
-                                  `products/${productId}/warna/${warnaId}/details/${detailId}/ukuran/${sizeId}/cones`
+                                  `products/${productId}/warna/${warnaId}/ukuran/${sizeId}/cones/${coneId}/details`
                                 ),
-                                (coneSnapshot) => {
-                                  coneSnapshot.docs.forEach((coneDoc) => {
-                                    const coneData = coneDoc.data()
-                                    const coneId = coneDoc.id;
-                                    const combinedId = `${productId}${warnaId}${detailId}${sizeId}${coneId}`;
+                                (detailSnapshot) => {
+                                  detailSnapshot.docs.forEach((detailDoc) => {
+                                    const detailData = detailDoc.data();
+                                    const detailId = detailDoc.id;
+                                    const combinedId = `${productId}${warnaId}${sizeId}${coneId}${detailId}`;
                                     const completeData = {
                                       id: combinedId,
-                                      ...productData, ...warnaData, ...detailData, ...sizeData, ...coneData
+                                      ...productData,
+                                      ...warnaData,
+                                      ...sizeData,
+                                      ...coneData,
+                                      ...detailData,
                                     };
                                     console.log(completeData);
                                     // Update list with new data structure
@@ -122,7 +126,36 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
 
   const handleUserDelete = async (id) => {
     try {
+      alert(`Hapus pengguna: ${id} ?`);
       await deleteDoc(doc(db, database, id));
+      setData(data.filter((item) => item.id !== id));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleProductDelete = async (id) => {
+    try {
+      alert(`Hapus kode produk: ${id} ?`);
+      const productsId = id.slice(0, 8);
+      const colorId = id.slice(8, 10);
+      const sizeId = id.slice(10, 12);
+      const conesId = id.slice(12, 14);
+      const detailsId = id.slice(14, 16);
+      const docRef = doc(
+        db,
+        "products",
+        productsId,
+        "warna",
+        colorId,
+        "ukuran",
+        sizeId,
+        "cones",
+        conesId,
+        "details",
+        detailsId
+      );
+      await deleteDoc(docRef);
       setData(data.filter((item) => item.id !== id));
     } catch (err) {
       console.log(err);
@@ -132,6 +165,7 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
   const deleteDataKirim = async (id) => {
     try {
       // Fetch the document from the database
+      alert(`Delete row with id: ${id}`);
       const docRef = doc(db, database, id);
       const docSnapshot = await getDoc(docRef);
       console.log(docSnapshot);
@@ -191,12 +225,20 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
               </div>
             )}
             {database === "products" && (
-              <div
-                className="deleteButton"
-                onClick={() => handleUserDelete(params.row.id)}
-              >
-                Hapus
-              </div>
+              <>
+                <Link
+                  to={`/produk/${params.row.id}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <div className="viewButton">Detail</div>
+                </Link>
+                <div
+                  className="deleteButton"
+                  onClick={() => handleProductDelete(params.row.id)}
+                >
+                  Hapus
+                </div>
+              </>
             )}
             {database === "kirim" && (
               <div
@@ -269,22 +311,31 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
     "& .MuiDataGrid-columnHeader": {
       // borderRight: `1px solid #303030`,
       backgroundColor: "#ff9359",
+      whiteSpace: "normal", // Allow wrapping for headers
       textWrap: "pretty",
+      wordWrap: "break-word", // Break long words in headers
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
     },
     "& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell": {
       // borderBottom: `1px solid #303030`,
+
       justifyContent: "center",
       // borderRight: `1px solid #303030`,
     },
     "& .MuiDataGrid-cell": {
       color: "rgba(0,0,0,.85)",
+      textAlign: "center",
       width: "100px",
+      whiteSpace: "normal", // Allow wrapping
+      wordWrap: "break-word", // Break long words
     },
     "& .MuiPaginationItem-root": {
       borderRadius: 0,
     },
     "& .MuiDataGrid-columnHeaderTitleContainer": {
-      justifyContent: "center",
+      justifyContent: "center"
     },
     ...customCheckbox(theme),
   }));

@@ -154,7 +154,7 @@ export const kirimInputs = [
     placeholder: "Benang Obras"
   },
   {
-    id: "detail",
+    id: "specific",
     label: "Detail Warna",
     type: "text",
     placeholder: "Hijau Daun"

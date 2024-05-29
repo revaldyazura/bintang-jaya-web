@@ -1,41 +1,88 @@
-.login{
-  height: 100vh;
+.login {
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  form{
+  form {
+    background: slateblue;
+    width: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    input{
-      width: 200px;
-      height: 30px;
-      margin: 10px;
-      border: 1px solid #424769;
-      border-radius: 5px;
+    h1 {
+      font-size: 36px;
+      text-align: center;
+      color: #fff;
+    }
+    .logo {
+      display: block;
+      width: 100px;
+      height: 100px;
     }
 
-    button{
+    .input-box {
+      position: relative;
+      width: 75%;
+      height: 50px;
+      margin: 30px 0;
+      input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        // margin: 10px;
+        border: 2px solid rgba(255, 255, 255, .2);
+        border-radius: 20px;
+        // padding: 0 10px;
+        background: transparent;
+        &::placeholder{
+          color: #fff;
+        }
+        &:focus {
+          border-color: #4285f4;
+          box-shadow: 0 0 8px rgba(66, 133, 244, 0.5);
+        }
+      }
+      .icon{
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 16px;
+      }
+    }
+
+    button {
       width: 200px;
-      height: 30px;
+      height: 40px; // Slightly larger button for better clickability
       border: none;
-      border-radius: 5px;
+      border-radius: 20px;
       background-color: #ff772e;
       color: white;
       font-weight: bold;
       cursor: pointer;
-      &:hover{
+      margin-bottom: 30px;
+
+      &:hover {
         background-color: #ff9359;
-        transition: .5s;
+        transition: background-color 0.5s;
       }
     }
 
-    span{
-      font-size: 12px;
+    span {
+      font-size: 14px;
       color: red;
       margin-top: 10px;
+    }
+  }
+
+  // Responsive adjustments
+  @media (max-width: 600px) {
+    form {
+      input,
+      button {
+        width: 90%; // Makes input and button width responsive
+      }
     }
   }
 }

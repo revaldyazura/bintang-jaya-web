@@ -26,10 +26,10 @@ const Video = () => {
   
   const handleColor = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    // const formData = new FormData(e.target);
     const data = {
       // colorName: colorName,
-      colorName: formData.get("colorname"),
+      // colorName: formData.get("colorname"),
       bgrValues: [
         currentColor.b,
         currentColor.g,
@@ -137,7 +137,7 @@ const Video = () => {
       </div>
       <div className="center">
         <form onSubmit={handleColor} id="formColor">
-          {inputs.map((input) => (
+          {/* {inputs.map((input) => (
             <div className="formInput" key={input.id}>
               <label >{input.label}</label>
               <input
@@ -148,7 +148,7 @@ const Video = () => {
                 required
               />
             </div>
-          ))}
+          ))} */}
         </form>
         <div className="colorPicker">
           <SketchPicker

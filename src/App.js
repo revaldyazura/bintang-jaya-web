@@ -51,11 +51,11 @@ function App() {
                 </RequireAuth>} />
               <Route path=":produkId" element={
                 <RequireAuth>
-                  <Single source={produkColumn} database="products" />
+                  <Single database="products" />
                 </RequireAuth>} />
               <Route path="tambah" element={
                 <RequireAuth>
-                  <New inputs={produkInputs} title="Tambah Data Produk" database="products" />
+                  <New inputs={produkInputs} title="Data Produk" database="products" />
                 </RequireAuth>} />
             </Route>
             <Route path="stok">
@@ -69,7 +69,7 @@ function App() {
                 </RequireAuth>} />
               <Route path="tambah" element={
                 <RequireAuth>
-                  <New inputs={stokInputs} title="Tambah Data Stok Barang" database="stok" />
+                  <New inputs={stokInputs} title="Data Stok Barang" database="stok" />
                 </RequireAuth>} />
             </Route>
             <Route path="kirim">
@@ -83,7 +83,7 @@ function App() {
                 </RequireAuth>} />
               <Route path="tambah" element={
                 <RequireAuth>
-                  <New inputs={kirimInputs} title="Tambah Data Kirim Barang" database="kirim" />
+                  <New inputs={kirimInputs} title="Data Kirim Barang" database="kirim" />
                 </RequireAuth>} />
             </Route>
           </Route>

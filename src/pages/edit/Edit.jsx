@@ -1,4 +1,4 @@
-import "./new.scss";
+import "./edit.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
@@ -24,27 +24,17 @@ import { useNavigate } from "react-router-dom";
 
 const New = ({ inputs, title, database }) => {
   const [file, setFile] = useState("");
+  const [data, setData] = useState({});
   const [percent, setPercent] = useState(null);
   const navigate = useNavigate();
   const [fetching, setFetching] = useState(false);
   const [productId, setProductId] = useState("");
   const [emptyResult, setEmptyResult] = useState(false);
-  const [guide, setGuide] = useState(false);
-  const [error, setError] = useState(false);
 
-  const defaultProductData = {
-    id: "1100EE00",
-    product: "Benang Obras",
-  };
-  const [data, setData] = useState(
-    database === "products" ? defaultProductData : {}
-  );
-
-  const handleGetData = async () => {
+  const handleButtonClick = async () => {
     setFetching(true);
-    const currentTime = Timestamp.fromDate(new Date());
     setTimeout(async () => {
-      const id = await fetchIdFromFirebase(currentTime);
+      const id = await fetchIdFromFirebase();
       if (!id) {
         setEmptyResult(true);
       } else {
@@ -56,20 +46,11 @@ const New = ({ inputs, title, database }) => {
       setFetching(false);
     }, 10000); // delay 10 seconds
   };
-
   const handleClosePopup = () => {
     setEmptyResult(false); // Close the pop-up message
-    setGuide(false);
-  };
-
-  const handleGuide = () => {
-    setGuide(true);
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      setGuide(true);
-    }, 0);
     const uploadFile = () => {
       const name = new Date().getTime() + file.name;
       const storageRef = ref(storage, name);
@@ -125,15 +106,15 @@ const New = ({ inputs, title, database }) => {
     }
   };
 
-  const fetchIdFromFirebase = async (currentTime) => {
+  const fetchIdFromFirebase = async () => {
     try {
-      // const today = new Date();
-      // const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-      // const todayTimestamp = Timestamp.fromDate(startOfDay);
-      // console.log(startOfDay, todayTimestamp);
+      const today = new Date();
+      const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+      const todayTimestamp = Timestamp.fromDate(startOfDay);
+      console.log(startOfDay, todayTimestamp);
       const queryTag = query(
         collection(db, "tags"),
-        where("timeStamp", ">=", currentTime),
+        where("timeStamp", ">=", todayTimestamp),
         orderBy("timeStamp", "desc"),
         limit(1)
       );
@@ -153,6 +134,7 @@ const New = ({ inputs, title, database }) => {
         // Call getStok function with newestId
         await getStok(newestId);
 
+        await fetchDataFromProducts(firstSixteenDigits);
         return newestId;
       }
     } catch (error) {
@@ -316,7 +298,6 @@ const New = ({ inputs, title, database }) => {
           specific: data.specific,
           number: data.number,
           stock: data.stock,
-          img: data.img,
         });
       }
       if (database === "stok") {
@@ -331,97 +312,35 @@ const New = ({ inputs, title, database }) => {
       }
       if (database === "kirim") {
         // Add new document if no existing document found
-        const stokId = data.id
-        console.log(stokId)
-        if (stokId) {
+        const newestId = await fetchIdFromFirebase();
+        if (newestId) {
           // Add tagId to document
-          const stokData = await getStok(stokId);
+          const stokData = await getStok(newestId);
           console.log(stokData);
-          await setDoc(doc(db, database, stokId), {
+          await setDoc(doc(db, database, newestId), {
             ...data,
             ...stokData,
             timeStamp: serverTimestamp(),
           });
-          await deleteStokData(stokId);
+          await deleteStokData(newestId);
         }
       }
       navigate(-1);
     } catch (err) {
       console.log(err);
-      setError("Terdapat error. Coba ulang kembali.");
     }
   };
 
   return (
-    <div className="new">
-      <Sidebar disabled={fetching}/>
-      <div className="newContainer">
-        <Navbar disabled={fetching}/>
+    <div className="edit">
+      <Sidebar />
+      <div className="editContainer">
+        <Navbar />
         <div className="top">
           <h1>{title}</h1>
-          {database !== "users" && (
-            <div className="top-right">
-              <button className="orange-button" disabled={fetching} onClick={handleGuide}>
-                PANDUAN
-              </button>
-            </div>
-          )}
-
-          {guide && database === "products" && (
-            <div className="popup show">
-              <div className="popup-inner">
-                <p>Panduan Kode Barang:</p>
-                <ul>
-                  <li>1100EE0001010101 = Panjang kode 16 digit.</li>
-                  <li>1100EE00 Default sebagai kode benang obras.</li>
-                  <li>
-                    Tambahkan 8 digit selanjutnya sesuai gambar panduan tanpa
-                    tanda (-).
-                  </li>
-                  <li>
-                    Setelah menambahkan kode barang, lakukan re-write pada
-                    stiker tag sesuai 8 digit terakhir.
-                  </li>
-                </ul>
-                <img
-                  src="https://firebasestorage.googleapis.com/v0/b/obras-7eb0b.appspot.com/o/guideCode.png?alt=media&token=77d7cb8c-0d34-4c66-9695-a3a4d5193c55"
-                  alt="Panduan Kode"
-                />
-                <button onClick={handleClosePopup} className="orange-button">
-                  Kembali
-                </button>
-              </div>
-            </div>
-          )}
-          {guide && (database === "stok" || database === "kirim") && (
-            <div className="popup show">
-              <div className="popup-inner">
-                <p>Panduan Pendataan Stok & Kirim Barang:</p>
-                <ul>
-                  <li>
-                    Klik tombol "Pindai Tag ID", terdapat jeda 10 detik untuk
-                    menunggu scan tag
-                  </li>
-                  <li>
-                    Selama jeda 10 detik, bawa barang yang sudah ditempelkan
-                    stiker tag melewati alat scan
-                  </li>
-                  <li>
-                    Cek data yang masuk, bila sesuai klik tombol "kirim".
-                  </li>
-                  <li>
-                  Jika data tidak sesuai / belum masuk, lakukan scan kembali
-                  </li>
-                </ul>
-                <button onClick={handleClosePopup} className="orange-button">
-                  Kembali
-                </button>
-              </div>
-            </div>
-          )}
         </div>
         <div className="bottom">
-          {database === "products" && (
+          {database === "stok" && (
             <div className="left">
               <img
                 src={
@@ -433,23 +352,12 @@ const New = ({ inputs, title, database }) => {
               />
             </div>
           )}
-          {(database === "stok" || database === "kirim") && (
-            <div className="left">
-              <img
-                src={
-                  data.img ||
-                  "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
-                }
-                alt=""
-              />
-            </div>
-          )}
           <div className="right">
             <form onSubmit={handleAdd}>
-              {database === "products" && (
+              {database === "stok" && (
                 <div className="formInput">
                   <label htmlFor="file">
-                    Gambar: <DriveFolderUploadOutlinedIcon className="icon" />
+                    Image: <DriveFolderUploadOutlinedIcon className="icon" />
                   </label>
                   <input
                     type="file"
@@ -461,29 +369,19 @@ const New = ({ inputs, title, database }) => {
               )}
               {database !== "users" && database !== "products" && (
                 <div className="getData">
-                  <button
-                    onClick={handleGetData}
-                    disabled={fetching}
-                    className="orange-button"
-                  >
+                  <button onClick={handleButtonClick} disabled={fetching}>
                     {fetching ? "Memindai..." : "Pindai Tag ID"}
                   </button>
                 </div>
               )}
               {emptyResult && (
-                <div className="popup show">
+                <div className="popup">
                   <div className="popup-inner">
                     <p>Data tidak ditemukan</p>
-                    <button
-                      onClick={handleClosePopup}
-                      className="orange-button"
-                    >
-                      Kembali
-                    </button>
+                    <button onClick={handleClosePopup}>Kembali</button>
                   </div>
                 </div>
               )}
-              {error && <div className="error-message">{error}</div>}
               {inputs.map((input) => (
                 <div className="formInput" key={input.id}>
                   <label>{input.label}</label>
@@ -498,9 +396,8 @@ const New = ({ inputs, title, database }) => {
               ))}
 
               <button
-                disabled={(percent !== null && percent < 100)|| fetching}
+                disabled={percent !== null && percent < 100}
                 type="submit"
-                className="orange-button"
               >
                 Kirim
               </button>

@@ -28,80 +28,94 @@ export const userColumns = [
 ];
 
 export const produkColumn = [
-  { field: "id", headerName: "Kode Barang", flex: 0.1, minWidth: 100 },
-  { field: "product", headerName: "Barang", flex: 0.1, minWidth: 150 },
-  { 
+  { field: "id", headerName: "Kode Barang", flex: 0.1, minWidth: 160 },
+  {
+    field: "product", headerName: "Barang", flex: 0.1, minWidth: 160, renderCell: (params) => {
+      return (
+        <div className="cellWithImg">
+          {params.row.img && (
+            <img className="cellImg" src={params.row.img} alt="produk" />
+          )}
+          {params.row.product}
+        </div>
+      )
+    }
+  },
+  {
     field: "color",
     headerName: "Warna",
     flex: 0.1,
     minWidth: 50,
   },
-  { 
-    field: "specific",
-    headerName: "Detail",
-    flex: 0.1,
-    minWidth: 100,
-  },
-  { 
+  {
     field: "number",
     headerName: "Nomor",
     flex: 0.1,
-    minWidth: 100,
+    minWidth: 50,
   },
-  { 
-    field: "stock",
-    headerName: "Stock",
+  {
+    field: "specific",
+    headerName: "Detail",
     flex: 0.1,
-    minWidth: 100,
+    minWidth: 50,
   },
-  { field: "thickness", headerName: "Tebal/satuan", flex: 0.1, minWidth: 100 },
-  { field: "weight", headerName: "Berat/satuan", flex: 0.1, minWidth: 100 },
-  { field: "height", headerName: "Tinggi cones", flex: 0.1, minWidth: 100 },
+  { field: "thickness", headerName: "Tebal/satuan", flex: 0.1, minWidth: 50 },
+  { field: "weight", headerName: "Berat/satuan", flex: 0.1, minWidth: 50 },
+  { field: "height", headerName: "Tinggi cones", flex: 0.1, minWidth: 50 },
+  {
+    field: "stock",
+    headerName: "Stok",
+    flex: 0.05,
+    minWidth: 50,
+  },
 ];
 export const stokColumn = [
-  { field: "id", headerName: "ID", flex: 0.1, minWidth: 180 },
+  { field: "id", headerName: "ID", flex: 0.1, minWidth: 160 },
 
   {
-    field: "product", headerName: "Barang", flex: 0.1, minWidth: 200, renderCell: (params) => {
+    field: "product", headerName: "Barang", flex: 0.1, minWidth: 160, renderCell: (params) => {
       return (
         <div className="cellWithImg">
           {params.row.img && (
-          <img className="cellImg" src={params.row.img} alt="produk" />
-        )}
-        {params.row.product}
+            <img className="cellImg" src={params.row.img} alt="produk" />
+          )}
+          {params.row.product}
         </div>
       )
     }
   },
-  { field: "specific", headerName: "Detail Warna", flex: 0.1, minWidth: 100 },
-  { field: "color", headerName: "Warna", flex: 0.1},
-  { field: "stock", headerName: "Stok", flex: 0.1},
+  { field: "color", headerName: "Warna", flex: 0.1 },
   { field: "number", headerName: "Nomor Warna", flex: 0.1, minWidth: 100 },
+  { field: "specific", headerName: "Detail Warna", flex: 0.1, minWidth: 100 },
   { field: "thickness", headerName: "Tebal/satuan", flex: 0.1, minWidth: 100 },
   { field: "weight", headerName: "Berat/satuan", flex: 0.1, minWidth: 100 },
   { field: "height", headerName: "Tinggi cones", flex: 0.1, minWidth: 100 },
-  { field: "timeStamp", headerName: "Waktu Masuk", flex: 0.1, minWidth: 450 },
+  { field: "stock", headerName: "Stok", flex: 0.1 },
+  { field: "timeStamp", headerName: "Waktu Masuk", flex: 0.1, minWidth: 200 },
 ];
 
 export const kirimColumn = [
-  { field: "id", headerName: "ID", flex: 0.1, minWidth: 180 },
+  { field: "id", headerName: "ID", flex: 0.1, minWidth: 160 },
 
   {
-    field: "product", headerName: "Barang", flex: 0.1, minWidth: 180, renderCell: (params) => {
+    field: "product", headerName: "Barang", flex: 0.1, minWidth: 150, renderCell: (params) => {
       return (
         <div className="cellWithImg">
           {params.row.img && (
-          <img className="cellImg" src={params.row.img} alt="produk" />
-        )}
-        {params.row.product}
+            <img className="cellImg" src={params.row.img} alt="produk" />
+          )}
+          {params.row.product}
         </div>
       )
     }
   },
-  { field: "detail", headerName: "Detail Warna", flex: 0.1, minWidth: 100 },
-  { field: "color", headerName: "Warna", flex: 0.1 },
-  { field: "stock", headerName: "Stok", flex: 0.1 },
-  { field: "number", headerName: "Nomor Warna", flex: 0.1, minWidth: 100 },
-  { field: "client", headerName: "Pembeli", flex: 0.1 },
-  { field: "timeStamp", headerName: "Waktu Kirim", flex: 0.1, minWidth: 250 },
+  { field: "color", headerName: "Warna", flex: 0.1, minWidth: 70 },
+  { field: "number", headerName: "Nomor Warna", flex: 0.1, minWidth: 105 },
+  { field: "specific", headerName: "Detail Warna", flex: 0.1, minWidth: 100 },
+  { field: "thickness", headerName: "Tebal/satuan", flex: 0.1, minWidth: 100 },
+  { field: "weight", headerName: "Berat/satuan", flex: 0.1, minWidth: 100 },
+  { field: "height", headerName: "Tinggi cones", flex: 0.1, minWidth: 100 },
+  { field: "stock", headerName: "Stok", flex: 0.1, minWidth: 50 },
+  { field: "client", headerName: "Pembeli", flex: 0.1, minWidth: 70 },
+  { field: "timeStamp", headerName: "Waktu Kirim", flex: 0.1, minWidth: 150 },
 ];
