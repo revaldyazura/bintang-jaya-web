@@ -9,25 +9,30 @@ import Paper from "@mui/material/Paper";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const List = ({ product, warna, tebal, berat, tinggi, detail, nomor, stok }) => {
+const List = ({ product, warna, nomor, berat, jenis, kones, stok, write }) => {
   const { produkId } = useParams();
   //  console.log(produkId)
   const [rows, setRows] = useState([]);
+  const hexValue = write.slice(0,2)
+  const intValue = write.slice(2, 8)
+  
 
   useEffect(() => {
     if (produkId) {
       const productsId = produkId.slice(0, 8);
-      const colorId = produkId.slice(8, 10);
-      const sizeId = produkId.slice(10, 12);
-      const conesId = produkId.slice(12, 14);
-      const detailsId = produkId.slice(14, 16);
+      const colorId = produkId.slice(8, 11);
+        const typeId = produkId.slice(11, 12);
+        const conesId = produkId.slice(12, 13);
+        const sizeId = produkId.slice(13, 15);
+        const amountId = produkId.slice(15, 16);
 
       const row = {
         productsId,
         colorId,
-        sizeId,
+        typeId,
         conesId,
-        detailsId,
+        sizeId,
+        amountId,
       };
 
       setRows([row]);
@@ -35,9 +40,10 @@ const List = ({ product, warna, tebal, berat, tinggi, detail, nomor, stok }) => 
       const row = {
         productsId: "1100EE00",
         colorId: "01",
+        typeId: "1",
+        conesId: "1",
         sizeId: "01",
-        conesId: "01",
-        detailsId: "01",
+        amountId: "01",
       };
       setRows([row]);
     }
@@ -46,43 +52,25 @@ const List = ({ product, warna, tebal, berat, tinggi, detail, nomor, stok }) => 
     <TableContainer component={Paper} className="table">
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
-          {rows.map((row, index) => (
+          {/* {rows.map((row, index) => (
             <TableRow key={index}>
-              <TableCell className="tableCell">
+              <TableCell className="tableCell" align="center">
                 {row.productsId} (Barang)
               </TableCell>
-              <TableCell className="tableCell">{row.colorId} (Warna)</TableCell>
-              <TableCell className="tableCell">{row.sizeId} (Berat)</TableCell>
-              <TableCell className="tableCell">
-                {row.conesId} (Tinggi)
-              </TableCell>
-              <TableCell className="tableCell">
-                {row.detailsId} (Detail)
-              </TableCell>
+              <TableCell className="tableCell"align="center">{row.colorId} (Warna)</TableCell>
+              <TableCell className="tableCell"align="center">{row.typeId} (Jenis)</TableCell>
+              <TableCell className="tableCell"align="center">{row.conesId} (Kones)</TableCell>
+              <TableCell className="tableCell"align="center">{row.sizeId} (Berat)</TableCell>
+              <TableCell className="tableCell" align="center">{row.amountId} (Stok)</TableCell>
             </TableRow>
-          ))}
+          ))} */}
+          <TableCell className="tableCell"align="center">Prefix (Hex)</TableCell>
+          <TableCell className="tableCell"align="center">Next (int)</TableCell>
         </TableHead>
         <TableBody>
           <TableRow>
-            <TableCell className="tableCell">{product}</TableCell>
-            <TableCell className="tableCell">{warna}</TableCell>
-            <TableCell className="tableCell">{tebal}</TableCell>
-            <TableCell className="tableCell">{tinggi}</TableCell>
-            <TableCell className="tableCell">{detail}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="tableCell"></TableCell>
-            <TableCell className="tableCell"></TableCell>
-            <TableCell className="tableCell">{berat}</TableCell>
-            <TableCell className="tableCell"></TableCell>
-            <TableCell className="tableCell">{nomor}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="tableCell"></TableCell>
-            <TableCell className="tableCell"></TableCell>
-            <TableCell className="tableCell"></TableCell>
-            <TableCell className="tableCell"></TableCell>
-            <TableCell className="tableCell">{stok}</TableCell>
+            <TableCell className="tableCell" align="center">{hexValue}</TableCell>
+            <TableCell className="tableCell" align="center">{intValue}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

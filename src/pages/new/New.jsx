@@ -21,19 +21,21 @@ import { auth, db, storage } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
 const New = ({ inputs, title, database }) => {
   const [file, setFile] = useState("");
   const [percent, setPercent] = useState(null);
   const navigate = useNavigate();
   const [fetching, setFetching] = useState(false);
-  const [productId, setProductId] = useState("");
   const [emptyResult, setEmptyResult] = useState(false);
   const [guide, setGuide] = useState(false);
   const [error, setError] = useState(false);
+  const [message, setMessage] = useState("");
+  const [typeOptions, setTypeOptions] = useState({});
 
   const defaultProductData = {
-    id: "1100EE00",
+    idProduct: "1100EE00",
     product: "Benang Obras",
   };
   const [data, setData] = useState(
@@ -54,12 +56,13 @@ const New = ({ inputs, title, database }) => {
         }));
       }
       setFetching(false);
-    }, 10000); // delay 10 seconds
+    }, 30000); // delay 30 seconds
   };
 
   const handleClosePopup = () => {
     setEmptyResult(false); // Close the pop-up message
     setGuide(false);
+    setError(false);
   };
 
   const handleGuide = () => {
@@ -70,8 +73,70 @@ const New = ({ inputs, title, database }) => {
     setTimeout(() => {
       setGuide(true);
     }, 0);
+    const fetchOptions = async () => {
+      const options = {};
+
+      for (const input of inputs) {
+        if (input.type === "dropdown") {
+          let q;
+          let field;
+          let additionalFields = [];
+          switch (input.id) {
+            case "number":
+              q = query(collection(db, "warna"));
+              field = "number";
+              additionalFields = ["color"];
+              break;
+            case "type":
+              q = query(collection(db, "jenis"));
+              field = "type";
+              break;
+            case "variant":
+              q = query(collection(db, "kones"));
+              field = "variant";
+              break;
+            case "weight":
+              q = query(collection(db, "berat"));
+              field = "weight";
+              break;
+            case "stock":
+              q = query(collection(db, "amount"));
+              field = "stock";
+              break;
+            case "client":
+              q = query(collection(db, "toko"));
+              field = "client";
+              break;
+            default:
+              break;
+          }
+
+          if (q && field) {
+            const querySnapshot = await getDocs(q);
+            options[input.id] = querySnapshot.docs.map((doc) => {
+              const data = doc.data();
+              let option = {
+                label: data[field], // Menggunakan field yang sesuai sebagai label
+                value: data[field], // Menggunakan nilai yang sesuai dari field
+                id: doc.id, // Simpan ID dokumen untuk referensi
+              };
+              // Tambahkan fields tambahan ke option
+              additionalFields.forEach((addField) => {
+                option[addField] = data[addField];
+              });
+              return option;
+            });
+          }
+        }
+      }
+
+      setTypeOptions(options);
+    };
+
+    fetchOptions();
+
     const uploadFile = () => {
-      const name = new Date().getTime() + file.name;
+      const name = new Date().getTime() + "-" + file.name;
       const storageRef = ref(storage, name);
 
       const uploadTask = uploadBytesResumable(storageRef, file);
@@ -113,18 +178,73 @@ const New = ({ inputs, title, database }) => {
       );
     };
     file && uploadFile();
-  }, [file]);
+  }, [file, inputs]);
 
   const handleInput = (e) => {
     const id = e.target.id;
     const value = e.target.value;
 
     setData({ ...data, [id]: value });
-    if (id === "id" && database === "products") {
-      setProductId(value); // Update the documentId state with the input value
-    }
   };
 
+  const handleInputChange = (e) => {
+    // Allow changes only in the additional part of the input
+    const id = e.target.id;
+    const newValue = e.target.value;
+    setData({ ...data, [id]: newValue });
+  };
+  const handleDropdownChange = (e) => {
+    const id = e.target.id;
+    const value = e.target.value;
+
+    // Temukan objek yang sesuai di typeOptions untuk mendapatkan ID dokumen
+    const selectedOption = typeOptions[id].find(
+      (option) => option.value === value
+    );
+
+    if (id === "number") {
+      // Set value for idWarna based on the selected option from the "number" dropdown
+      setData((prevData) => ({
+        ...prevData,
+        [id]: value, // Mengatur nomor warna
+        idColor: selectedOption ? selectedOption.id : "", // Mengatur idColor
+        color: selectedOption ? selectedOption.color : "",
+      }));
+    } else if (id === "type") {
+      // Set value for idType based on the selected option from the "type" dropdown
+      setData((prevData) => ({
+        ...prevData,
+        [id]: value, // Mengatur jenis benang
+        idType: selectedOption ? selectedOption.id : "", // Mengatur idType
+      }));
+    } else if (id === "variant") {
+      // Set value for idCones based on the selected option from the "variant" dropdown
+      setData((prevData) => ({
+        ...prevData,
+        [id]: value, // Mengatur varian kones
+        idCones: selectedOption ? selectedOption.id : "", // Mengatur idCones
+      }));
+    } else if (id === "weight") {
+      // Set value for idSize based on the selected option from the "weight" dropdown
+      setData((prevData) => ({
+        ...prevData,
+        [id]: value, // Mengatur berat per-satuan
+        idSize: selectedOption ? selectedOption.id : "", // Mengatur idSize
+      }));
+    } else if (id === "stock") {
+      // Set value for idAmount based on the selected option from the "stock" dropdown
+      setData((prevData) => ({
+        ...prevData,
+        [id]: value, // Mengatur stok
+        idAmount: selectedOption ? selectedOption.id : "", // Mengatur idAmount
+      }));
+    } else {
+      setData((prevData) => ({
+        ...prevData,
+        [id]: value,
+      }));
+    }
+  };
   const fetchIdFromFirebase = async (currentTime) => {
     try {
       // const today = new Date();
@@ -149,21 +269,19 @@ const New = ({ inputs, title, database }) => {
         console.log("Products Data:", productsData);
 
         setData({ ...data, ...productsData });
-
-        // Call getStok function with newestId
-        await getStok(newestId);
-
         return newestId;
       }
     } catch (error) {
       console.error("Error getting newest ID: ", error);
+      setError(true);
+      setMessage("No ID found. Please try again.");
     }
   };
 
-  const fetchDataFromProducts = async (firstSixteenDigits) => {
+  const fetchDataFromProducts = async (code) => {
     try {
       // Construct a query to fetch data from the "products" collection
-      const productsId = firstSixteenDigits.slice(0, 8);
+      const productsId = code.slice(0, 8);
       console.log(productsId);
       const productDocRef = doc(db, "products", productsId);
       const productSnapshot = await getDoc(productDocRef);
@@ -172,59 +290,62 @@ const New = ({ inputs, title, database }) => {
         // Extract the data from the query snapshot
         const productsData = productSnapshot.data();
         console.log("Products Data:", productsData);
-        const colorId = firstSixteenDigits.slice(8, 10);
-        const sizeId = firstSixteenDigits.slice(10, 12);
-        const conesId = firstSixteenDigits.slice(12, 14);
-        const detailsId = firstSixteenDigits.slice(14, 16);
-        console.log(colorId, detailsId, sizeId, conesId);
-        // const colorDocRef = doc(db, "products", firstEightDigits, sixDigitsColor, twoDigitsColorDetail)
+        const colorId = code.slice(8, 11);
+        const typeId = code.slice(11, 12);
+        const conesId = code.slice(12, 13);
+        const sizeId = code.slice(13, 15);
+        const amountId = code.slice(15, 16);
+        console.log(colorId, typeId, conesId, sizeId, amountId);
         const colorDocRef = doc(productDocRef, "warna", colorId);
         const colorSnapshot = await getDoc(colorDocRef);
         if (colorSnapshot.exists()) {
           const colorData = colorSnapshot.data();
 
-          console.log("Color data: ", colorData);
-          const sizeDocRef = doc(colorDocRef, "ukuran", sizeId);
-          const sizeSnapshot = await getDoc(sizeDocRef);
-          if (sizeSnapshot.exists()) {
-            const sizeData = sizeSnapshot.data();
-            console.log("Size data: ", sizeData);
+          const typeDocRef = doc(colorDocRef, "jenis", typeId);
+          const typeSnapshot = await getDoc(typeDocRef);
+          if (typeSnapshot.exists()) {
+            const typeData = typeSnapshot.data();
 
-            const coneDocRef = doc(sizeDocRef, "cones", conesId);
+            const coneDocRef = doc(typeDocRef, "kones", conesId);
             const coneSnapshot = await getDoc(coneDocRef);
             if (coneSnapshot.exists()) {
               const coneData = coneSnapshot.data();
-              console.log("cones data: ", coneData);
 
-              const detailDocRef = doc(coneDocRef, "details", detailsId);
-              const detailSnapshot = await getDoc(detailDocRef);
-              if (detailSnapshot.exists()) {
-                const detailData = detailSnapshot.data();
-                console.log("Details Data: ", detailData);
-                const fetchedData = {
-                  ...productsData,
-                  ...colorData,
-                  ...detailData,
-                  ...sizeData,
-                  ...coneData,
-                };
-                return fetchedData;
+              const sizeDocRef = doc(coneDocRef, "ukuran", sizeId);
+              const sizeSnapshot = await getDoc(sizeDocRef);
+              if (sizeSnapshot.exists()) {
+                const sizeData = sizeSnapshot.data();
+
+                const amountDocRef = doc(sizeDocRef, "jumlah", amountId);
+                const amountSnapshot = await getDoc(amountDocRef);
+                if (amountSnapshot.exists()) {
+                  const amountData = amountSnapshot.data();
+                  const fetchedData = {
+                    ...productsData,
+                    ...colorData,
+                    ...typeData,
+                    ...coneData,
+                    ...sizeData,
+                    ...amountData,
+                  };
+                  return fetchedData;
+                } else {
+                  console.log("no doc found in details collection");
+                }
               } else {
-                console.log("no doc found in details collection");
+                console.log("no doc found in cones collection");
               }
             } else {
-              console.log("no doc found in cones collection");
+              console.log("no doc found in size collection");
             }
           } else {
-            console.log("no doc found in size collection");
+            console.log("no doc found in color collection");
           }
+          return productsData;
         } else {
-          console.log("no doc found in color collection");
+          console.log("No matching document found in 'products' collection.");
+          return null;
         }
-        return productsData;
-      } else {
-        console.log("No matching document found in 'products' collection.");
-        return null;
       }
     } catch (error) {
       console.error("Error fetching data from 'products' collection:", error);
@@ -239,7 +360,6 @@ const New = ({ inputs, title, database }) => {
 
       if (stokSnapshot.exists()) {
         const stokData = stokSnapshot.data();
-        console.log("Stok Data:", stokData);
         return stokData;
       } else {
         console.log("No matching document found in 'stok' collection.");
@@ -269,7 +389,7 @@ const New = ({ inputs, title, database }) => {
 
   const handleAdd = async (e) => {
     e.preventDefault();
-
+    const uid = uuidv4();
     try {
       if (database === "users") {
         const res = await createUserWithEmailAndPassword(
@@ -281,58 +401,56 @@ const New = ({ inputs, title, database }) => {
           ...data,
           timeStamp: serverTimestamp(),
         });
-      }
-      if (database === "products") {
-        const idProduct = productId.substring(0, 8); // 8 char product ID
-        const idColor = productId.substring(8, 10); // 2 char color ID
-        const idSize = productId.substring(10, 12);
-        const idCones = productId.slice(12, 14);
-        const idDetails = productId.slice(14, 16);
-
-        const productRef = doc(db, "products", idProduct);
+      } else if (database === "toko") {
+        await setDoc(doc(db, database, uid), {
+          ...data,
+          timeStamp: serverTimestamp(),
+        });
+      } else if (database === "products") {
+        const productRef = doc(db, "products", data.idProduct);
         await setDoc(productRef, {
           product: data.product,
           timeStamp: serverTimestamp(),
         });
 
         // Set warna subdocument
-        const warnaRef = doc(productRef, "warna", idColor);
+        const warnaRef = doc(productRef, "warna", data.idColor);
         await setDoc(warnaRef, {
           color: data.color,
+          number: data.number,
+          img: data.img || "",
         });
-        const sizeRef = doc(warnaRef, "ukuran", idSize);
-        await setDoc(sizeRef, {
-          thickness: data.thickness,
-          weight: data.weight,
+        const typeRef = doc(warnaRef, "jenis", data.idType);
+        await setDoc(typeRef, {
+          type: data.type,
         });
-        const coneRef = doc(sizeRef, "cones", idCones);
+        const coneRef = doc(typeRef, "kones", data.idCones);
         await setDoc(coneRef, {
-          height: data.height,
+          variant: data.variant,
         });
 
         // Set details subdocument within warna
-        const detailsRef = doc(coneRef, "details", idDetails);
-        await setDoc(detailsRef, {
-          specific: data.specific,
-          number: data.number,
-          stock: data.stock,
-          img: data.img,
+        const sizeRef = doc(coneRef, "ukuran", data.idSize);
+        await setDoc(sizeRef, {
+          weight: data.weight,
         });
-      }
-      if (database === "stok") {
-        const newestId = await fetchIdFromFirebase();
-        if (newestId) {
+        const amountRef = doc(sizeRef, "jumlah", data.idAmount);
+        await setDoc(amountRef, {
+          stock: data.stock,
+        });
+      } else if (database === "stok") {
+        const stokId = data.id;
+        if (stokId) {
           // Add tagId to document
-          await setDoc(doc(db, database, newestId), {
+          await setDoc(doc(db, database, stokId), {
             ...data,
             timeStamp: serverTimestamp(),
           });
         }
-      }
-      if (database === "kirim") {
+      } else if (database === "kirim") {
         // Add new document if no existing document found
-        const stokId = data.id
-        console.log(stokId)
+        const stokId = data.id;
+        console.log(stokId);
         if (stokId) {
           // Add tagId to document
           const stokData = await getStok(stokId);
@@ -344,24 +462,38 @@ const New = ({ inputs, title, database }) => {
           });
           await deleteStokData(stokId);
         }
+      } else {
+        const id = data.id;
+        if (id) {
+          await setDoc(doc(db, database, id), {
+            ...data,
+          });
+        }
       }
       navigate(-1);
     } catch (err) {
       console.log(err);
-      setError("Terdapat error. Coba ulang kembali.");
+      setError(true);
+      setMessage("Terdapat error. Coba ulang kembali.");
     }
   };
 
   return (
     <div className="new">
-      <Sidebar disabled={fetching}/>
+      <Sidebar disabled={fetching} />
       <div className="newContainer">
-        <Navbar disabled={fetching}/>
+        <Navbar disabled={fetching} />
         <div className="top">
           <h1>{title}</h1>
-          {database !== "users" && (
+          {(database === "products" ||
+            database === "stok" ||
+            database === "kirim") && (
             <div className="top-right">
-              <button className="orange-button" disabled={fetching} onClick={handleGuide}>
+              <button
+                className="orange-button"
+                disabled={fetching}
+                onClick={handleGuide}
+              >
                 PANDUAN
               </button>
             </div>
@@ -370,25 +502,35 @@ const New = ({ inputs, title, database }) => {
           {guide && database === "products" && (
             <div className="popup show">
               <div className="popup-inner">
-                <p>Panduan Kode Barang:</p>
+                <p>Panduan Kode Tag:</p>
                 <ul>
-                  <li>1100EE0001010101 = Panjang kode 16 digit.</li>
+                  <li>1100EE0000411011 = Panjang kode 16 digit.</li>
                   <li>1100EE00 Default sebagai kode benang obras.</li>
                   <li>
-                    Tambahkan 8 digit selanjutnya sesuai gambar panduan tanpa
-                    tanda (-).
+                    8 digit selanjutnya sesuai tabel panduan:{" "}
+                    <a
+                      href="https://docs.google.com/spreadsheets/d/1zcfO4er1JyRPriUbqyzxFwQUKJukeQBK13Y6rLKJoV0/edit#gid=0&range=A1:P24"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      klik di sini
+                    </a>
                   </li>
                   <li>
-                    Setelah menambahkan kode barang, lakukan re-write pada
-                    stiker tag sesuai 8 digit terakhir.
+                    Jika data belum tersedia, tambahkan data pada masing-masing
+                    laman data.
+                  </li>
+                  <li>
+                    Setelah menambahkan kode tag, lakukan re-write sesuai
+                    panduan pada laman "Detail".
                   </li>
                 </ul>
-                <img
+                {/* <img
                   src="https://firebasestorage.googleapis.com/v0/b/obras-7eb0b.appspot.com/o/guideCode.png?alt=media&token=77d7cb8c-0d34-4c66-9695-a3a4d5193c55"
                   alt="Panduan Kode"
-                />
+                /> */}
                 <button onClick={handleClosePopup} className="orange-button">
-                  Kembali
+                  Tutup
                 </button>
               </div>
             </div>
@@ -399,22 +541,30 @@ const New = ({ inputs, title, database }) => {
                 <p>Panduan Pendataan Stok & Kirim Barang:</p>
                 <ul>
                   <li>
-                    Klik tombol "Pindai Tag ID", terdapat jeda 10 detik untuk
+                    Contoh TagID:{" "}
+                    <a
+                      href="https://docs.google.com/spreadsheets/d/1zcfO4er1JyRPriUbqyzxFwQUKJukeQBK13Y6rLKJoV0/edit#gid=95701413&range=A1:G6"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      klik di sini
+                    </a>
+                  </li>
+                  <li>
+                    Klik tombol "Pindai Tag ID", terdapat jeda 30 detik untuk
                     menunggu scan tag
                   </li>
                   <li>
-                    Selama jeda 10 detik, bawa barang yang sudah ditempelkan
+                    Selama jeda 30 detik, bawa barang yang sudah ditempelkan
                     stiker tag melewati alat scan
                   </li>
+                  <li>Cek data yang masuk, bila sesuai klik tombol "kirim".</li>
                   <li>
-                    Cek data yang masuk, bila sesuai klik tombol "kirim".
-                  </li>
-                  <li>
-                  Jika data tidak sesuai / belum masuk, lakukan scan kembali
+                    Jika data tidak sesuai / belum masuk, lakukan scan kembali
                   </li>
                 </ul>
                 <button onClick={handleClosePopup} className="orange-button">
-                  Kembali
+                  Tutup
                 </button>
               </div>
             </div>
@@ -447,7 +597,7 @@ const New = ({ inputs, title, database }) => {
           <div className="right">
             <form onSubmit={handleAdd}>
               {database === "products" && (
-                <div className="formInput">
+                <div className="formRow">
                   <label htmlFor="file">
                     Gambar: <DriveFolderUploadOutlinedIcon className="icon" />
                   </label>
@@ -459,7 +609,7 @@ const New = ({ inputs, title, database }) => {
                   />
                 </div>
               )}
-              {database !== "users" && database !== "products" && (
+              {(database === "stok" || database === "kirim") && (
                 <div className="getData">
                   <button
                     onClick={handleGetData}
@@ -478,31 +628,94 @@ const New = ({ inputs, title, database }) => {
                       onClick={handleClosePopup}
                       className="orange-button"
                     >
-                      Kembali
+                      Tutup
                     </button>
                   </div>
                 </div>
               )}
-              {error && <div className="error-message">{error}</div>}
-              {inputs.map((input) => (
-                <div className="formInput" key={input.id}>
-                  <label>{input.label}</label>
-                  <input
-                    id={input.id}
-                    type={input.type}
-                    placeholder={input.placeholder}
-                    value={data[input.id] || ""} // Autofill input value from data state
-                    onChange={handleInput}
-                  />
+              {error && (
+                <div className="popup show">
+                  <div className="popup-inner">
+                    <p style={{ color: "red" }}>{message}</p>
+                    <button
+                      onClick={handleClosePopup}
+                      className="orange-button"
+                    >
+                      Tutup
+                    </button>
+                  </div>
                 </div>
-              ))}
+              )}
+              {(database === "products" || database === "kirim") &&
+                inputs.map((input) => (
+                  <div
+                    className={
+                      input.id === "idProduct" ||
+                      input.id === "product" ||
+                      input.id === "idColor" ||
+                      input.id === "color" ||
+                      input.id === "number"
+                        ? "formRow"
+                        : "formInput"
+                    }
+                    key={input.id}
+                  >
+                    <label>{input.label}</label>
+                    {input.type === "dropdown" ? (
+                      <select
+                        id={input.id}
+                        value={data[input.id] || ""}
+                        onChange={handleDropdownChange}
+                      >
+                        <option value="" disabled>
+                          {input.placeholder}
+                        </option>
+                        {(typeOptions[input.id] || input.options).map(
+                          (option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          )
+                        )}
+                      </select>
+                    ) : (
+                      <input
+                        id={input.id}
+                        type={input.type}
+                        placeholder={input.placeholder}
+                        value={data[input.id] || ""}
+                        onChange={handleInputChange}
+                        minLength={input.minLength}
+                        maxLength={input.maxLength}
+                        readOnly={input.readOnly}
+                      />
+                    )}
+                  </div>
+                ))}
+              {database !== "products" &&
+                database !== "kirim" &&
+                inputs.map((input) => (
+                  <div className="formInput" key={input.id}>
+                    <label>{input.label}</label>
+                    <input
+                      id={input.id}
+                      type={input.type}
+                      placeholder={input.placeholder}
+                      value={data[input.id] || ""} // Autofill input value from data state
+                      onChange={handleInput}
+                      minLength={input.minLength}
+                      maxLength={input.maxLength}
+                      readOnly={input.readOnly}
+                    />
+                  </div>
+                ))}
 
               <button
-                disabled={(percent !== null && percent < 100)|| fetching}
+                disabled={(percent !== null && percent < 100) || fetching}
                 type="submit"
                 className="orange-button"
               >
-                Kirim
+                Submit
               </button>
             </form>
           </div>

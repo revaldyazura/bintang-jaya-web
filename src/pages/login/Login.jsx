@@ -4,13 +4,16 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import EmailIcon from '@mui/icons-material/Email';
-import PasswordIcon from '@mui/icons-material/Password';
+import EmailIcon from "@mui/icons-material/Email";
+import PasswordIcon from "@mui/icons-material/Password";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const Login = () => {
   const [error, setError] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const navigate = useNavigate();
 
@@ -31,6 +34,14 @@ const Login = () => {
         // ..
       });
   };
+  const handleInputChange = (e) => {
+    setError(false); // Reset error state on input change
+    if (e.target.name === "email") {
+      setEmail(e.target.value);
+    } else if (e.target.name === "password") {
+      setPassword(e.target.value);
+    }
+  };
 
   return (
     <div className="login">
@@ -40,31 +51,44 @@ const Login = () => {
           alt="Logo"
           className="logo"
         />
-        <h1>Masuk</h1>
+        <h1>Bintang Jaya</h1>
         <div className="input-box">
           <input
             type="email"
+            name="email"
             placeholder="Masukkan email @bintang.jaya"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleInputChange}
             required
             autoComplete="email"
             aria-label="Email"
           />
-          <EmailIcon className="icon"/>
+          <EmailIcon className="icon" />
         </div>
         <div className="input-box">
           <input
-            type="password"
+            type={passwordVisible ? "text" : "password"}
             placeholder="Masukkan password"
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            onChange={handleInputChange}
             required
             autoComplete="current-password"
             aria-label="Password"
           />
-          <PasswordIcon className="icon"/>
+          <PasswordIcon className="icon" />
+          {passwordVisible ? (
+            <VisibilityOffIcon
+              className="icon toggle-icon"
+              onClick={() => setPasswordVisible(false)}
+            />
+          ) : (
+            <VisibilityIcon
+              className="icon toggle-icon"
+              onClick={() => setPasswordVisible(true)}
+            />
+          )}
         </div>
-        <button type="submit">Login</button>
-        {error && <span>Wrong Email or Password</span>}
+        <button type="submit">Masuk</button>
+        {error && <span>Salah Email / Password</span>}
       </form>
     </div>
   );

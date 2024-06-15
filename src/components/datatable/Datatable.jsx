@@ -16,6 +16,7 @@ import {
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import { db } from "../../firebase";
 import { Box, styled } from "@mui/material";
+import { confirmAlert } from "react-confirm-alert";
 
 const Datatable = ({ source, database, title, newPath, idPath }) => {
   const [data, setData] = useState([]);
@@ -35,65 +36,78 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
             const createdAtTimestamp = data.timeStamp; // Access the timestamp field
             const createdAtDate = createdAtTimestamp.toDate(); // Convert to JavaScript Date
             list.push({ id, ...data, timeStamp: createdAtDate });
-          } else if (database === "users") {
-            list.push({ id: doc.id, ...doc.data() });
           } else if (database === "products") {
             const productData = doc.data();
             const productId = doc.id;
 
             // Nested listener for 'warna'
-            const warnaSub = onSnapshot(
+            const colorSub = onSnapshot(
               collection(db, `products/${productId}/warna`),
-              (warnaSnapshot) => {
-                warnaSnapshot.docs.forEach((warnaDoc) => {
-                  const warnaData = warnaDoc.data();
-                  const warnaId = warnaDoc.id;
+              (colorSnapshot) => {
+                colorSnapshot.docs.forEach((warnaDoc) => {
+                  const colorData = warnaDoc.data();
+                  const colorId = warnaDoc.id;
 
-                  const sizeSubs = onSnapshot(
+                  const typeSubs = onSnapshot(
                     collection(
                       db,
-                      `products/${productId}/warna/${warnaId}/ukuran`
+                      `products/${productId}/warna/${colorId}/jenis`
                     ),
-                    (sizeSnapshot) => {
-                      sizeSnapshot.docs.forEach((sizeDoc) => {
-                        const sizeData = sizeDoc.data();
-                        const sizeId = sizeDoc.id;
+                    (typeSnapshot) => {
+                      typeSnapshot.docs.forEach((typeDoc) => {
+                        const typeData = typeDoc.data();
+                        const typeId = typeDoc.id;
 
                         const coneSubs = onSnapshot(
                           collection(
                             db,
-                            `products/${productId}/warna/${warnaId}/ukuran/${sizeId}/cones`
+                            `products/${productId}/warna/${colorId}/jenis/${typeId}/kones`
                           ),
                           (coneSnapshot) => {
                             coneSnapshot.docs.forEach((coneDoc) => {
                               const coneData = coneDoc.data();
                               const coneId = coneDoc.id;
 
-                              const detailSubs = onSnapshot(
+                              const sizeSubs = onSnapshot(
                                 collection(
                                   db,
-                                  `products/${productId}/warna/${warnaId}/ukuran/${sizeId}/cones/${coneId}/details`
+                                  `products/${productId}/warna/${colorId}/jenis/${typeId}/kones/${coneId}/ukuran`
                                 ),
-                                (detailSnapshot) => {
-                                  detailSnapshot.docs.forEach((detailDoc) => {
-                                    const detailData = detailDoc.data();
-                                    const detailId = detailDoc.id;
-                                    const combinedId = `${productId}${warnaId}${sizeId}${coneId}${detailId}`;
-                                    const completeData = {
-                                      id: combinedId,
-                                      ...productData,
-                                      ...warnaData,
-                                      ...sizeData,
-                                      ...coneData,
-                                      ...detailData,
-                                    };
-                                    console.log(completeData);
-                                    // Update list with new data structure
-                                    list = list.filter(
-                                      (item) => item.id !== combinedId
-                                    ); // Remove old entry if exists
-                                    list.push(completeData);
-                                    setData([...list]); // Update state to trigger re-render
+                                (sizeSnapshot) => {
+                                  sizeSnapshot.docs.forEach((sizeDoc) => {
+                                    const sizeData = sizeDoc.data();
+                                    const sizeId = sizeDoc.id;
+                                    const amountSubs = onSnapshot(
+                                      collection(
+                                        db,
+                                        `products/${productId}/warna/${colorId}/jenis/${typeId}/kones/${coneId}/ukuran/${sizeId}/jumlah`
+                                      ),
+                                      (amountSnapshot) => {
+                                        amountSnapshot.docs.forEach(
+                                          (amountDoc) => {
+                                            const amountData = amountDoc.data();
+                                            const amountId = amountDoc.id;
+                                            const combinedId = `${productId}${colorId}${typeId}${coneId}${sizeId}${amountId}`;
+                                            const completeData = {
+                                              id: combinedId,
+                                              ...productData,
+                                              ...colorData,
+                                              ...typeData,
+                                              ...coneData,
+                                              ...sizeData,
+                                              ...amountData,
+                                            };
+                                            console.log(completeData);
+                                            // Update list with new data structure
+                                            list = list.filter(
+                                              (item) => item.id !== combinedId
+                                            ); // Remove old entry if exists
+                                            list.push(completeData);
+                                            setData([...list]); // Update state to trigger re-render
+                                          }
+                                        );
+                                      }
+                                    );
                                   });
                                 }
                               );
@@ -109,6 +123,8 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
                 console.log(error);
               }
             );
+          } else {
+            list.push({ id: doc.id, ...doc.data() });
           }
         });
 
@@ -124,78 +140,143 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
     };
   }, []);
 
-  const handleUserDelete = async (id) => {
-    try {
-      alert(`Hapus pengguna: ${id} ?`);
-      await deleteDoc(doc(db, database, id));
-      setData(data.filter((item) => item.id !== id));
-    } catch (err) {
-      console.log(err);
-    }
+  const handleDelete = async (id) => {
+    confirmAlert({
+      title: "Konfirmasi Penghapusan",
+      message: `Hapus data?`,
+      buttons: [
+        {
+          label: "Ya",
+          onClick: async () => {
+            try {
+              const docRef = doc(db, database, id);
+              const docSnapshot = await getDoc(docRef);
+              console.log(docSnapshot);
+              if (docSnapshot.exists()) {
+                await deleteDoc(docRef);
+
+                // Update the data array, filtering out the deleted document
+                setData(data.filter((item) => item.id !== id));
+              } else {
+                console.log("Document does not exist");
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          },
+        },
+
+        {
+          label: "Batal",
+          onClick: () => {
+            console.log(`Penghapusan data dengan kode ${id} dibatalkan.`);
+          },
+        },
+      ],
+    });
   };
 
   const handleProductDelete = async (id) => {
-    try {
-      alert(`Hapus kode produk: ${id} ?`);
-      const productsId = id.slice(0, 8);
-      const colorId = id.slice(8, 10);
-      const sizeId = id.slice(10, 12);
-      const conesId = id.slice(12, 14);
-      const detailsId = id.slice(14, 16);
-      const docRef = doc(
-        db,
-        "products",
-        productsId,
-        "warna",
-        colorId,
-        "ukuran",
-        sizeId,
-        "cones",
-        conesId,
-        "details",
-        detailsId
-      );
-      await deleteDoc(docRef);
-      setData(data.filter((item) => item.id !== id));
-    } catch (err) {
-      console.log(err);
-    }
+    confirmAlert({
+      title: "Konfirmasi Penghapusan",
+      message: `Hapus kode produk: ${id} ?`,
+      buttons: [
+        {
+          label: "Ya",
+          onClick: async () => {
+            try {
+              // Lakukan proses penghapusan
+              console.log(`Produk dengan kode ${id} telah dihapus.`);
+              const productsId = id.slice(0, 8);
+              const colorId = id.slice(8, 11);
+              const typeId = id.slice(11, 12);
+              const conesId = id.slice(12, 13);
+              const sizeId = id.slice(13, 15);
+              const amountId = id.slice(15, 16);
+              const colorRef = doc(
+                db,
+                "products",
+                productsId,
+                "warna",
+                colorId
+              );
+              const typeRef = doc(colorRef, "jenis", typeId);
+              const conesRef = doc(typeRef, "kones", conesId);
+              const sizeRef = doc(conesRef, "ukuran", sizeId);
+              const amountRef = doc(sizeRef, "jumlah", amountId);
+              await deleteDoc(amountRef);
+              setData(data.filter((item) => item.id !== id));
+            } catch (err) {
+              console.log(err);
+            }
+          },
+        },
+
+        {
+          label: "Batal",
+          onClick: () => {
+            console.log(`Penghapusan produk dengan kode ${id} dibatalkan.`);
+          },
+        },
+      ],
+    });
   };
 
   const deleteDataKirim = async (id) => {
-    try {
-      // Fetch the document from the database
-      alert(`Delete row with id: ${id}`);
-      const docRef = doc(db, database, id);
-      const docSnapshot = await getDoc(docRef);
-      console.log(docSnapshot);
-      if (docSnapshot.exists()) {
-        // Retrieve the value of the "img" field
-        const imgNameValue = docSnapshot.data().imgName;
-        if (imgNameValue) {
-          // Create a reference to the file to delete
-          const deleteRef = ref(storage, imgNameValue);
-          // Delete the file
-          deleteObject(deleteRef)
-            .then(() => {
-              console.log("file deleted");
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
+    confirmAlert({
+      title: "Konfirmasi Penghapusan",
+      message: `Hapus data: ${id} ?`,
+      buttons: [
+        {
+          label: "Ya",
+          onClick: async () => {
+            try {
+              const docRef = doc(db, database, id);
+              const docSnapshot = await getDoc(docRef);
+              console.log(docSnapshot);
+              if (docSnapshot.exists()) {
+                // Retrieve the value of the "img" field
+                // const imgURL = docSnapshot.data().img;
+                // const pathStartIndex = imgURL.indexOf("/o/") + 3;
+                // const pathEndIndex = imgURL.indexOf("?alt=");
+                // const filePath = decodeURIComponent(
+                //   imgURL.substring(pathStartIndex, pathEndIndex)
+                // );
+                // if (filePath) {
+                //   // Create a reference to the file to delete
+                //   const deleteRef = ref(storage, filePath);
+                //   // Delete the file
+                //   deleteObject(deleteRef)
+                //     .then(() => {
+                //       console.log("file deleted");
+                //     })
+                //     .catch((error) => {
+                //       console.log(error);
+                //     });
+                // }
 
-        // Delete the document from the database
-        await deleteDoc(docRef);
+                // Delete the document from the database
+                await deleteDoc(docRef);
 
-        // Update the data array, filtering out the deleted document
-        // setData(data.filter((item) => item.id !== id));
-      } else {
-        console.log("Document does not exist");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+                // Update the data array, filtering out the deleted document
+                setData(data.filter((item) => item.id !== id));
+              } else {
+                console.log("Document does not exist");
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          },
+        },
+
+        {
+          label: "Batal",
+          onClick: () => {
+            console.log(`Penghapusan data dengan kode ${id} dibatalkan.`);
+          },
+        },
+      ],
+    });
   };
 
   const actionColumn = [
@@ -207,19 +288,10 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            {/* <Link to={idPath} style={{ textDecoration: "none" }}>
-              <div className="viewButton">Lihat</div>
-            </Link> */}
-            {/* {database === "stok" && <div
-              className="deleteButton"
-              onClick={() => handleDelete(params.row.id)}
-            >
-              Kirim
-            </div>} */}
-            {database === "users" && (
+            {(database !== "products" && database !== "kirim") && (
               <div
                 className="deleteButton"
-                onClick={() => handleUserDelete(params.row.id)}
+                onClick={() => handleDelete(params.row.id)}
               >
                 Hapus
               </div>
@@ -227,7 +299,7 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
             {database === "products" && (
               <>
                 <Link
-                  to={`/produk/${params.row.id}`}
+                  to={`/kode/${params.row.id}`}
                   style={{ textDecoration: "none" }}
                 >
                   <div className="viewButton">Detail</div>
@@ -335,7 +407,13 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
       borderRadius: 0,
     },
     "& .MuiDataGrid-columnHeaderTitleContainer": {
-      justifyContent: "center"
+      justifyContent: "center",
+    },
+    "& .MuiDataGrid-virtualScroller": {
+      overflowY: "visible",
+    },
+    "& .MuiDataGrid-row": {
+      // overflowY: 'hidden',
     },
     ...customCheckbox(theme),
   }));
@@ -351,13 +429,11 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
       <StyledDataGrid
         rows={data}
         columns={database !== "stok" ? source.concat(actionColumn) : source}
-        pageSize={9}
-        rowsPerPageOptions={[9]}
-        // initialState={{
-        //   ...data.initialState,
-        //   pagination: { paginationModel: { pageSize: 5 } },
-        // }}
-        // pageSizeOptions={[5, 10, 25]}
+        initialState={{
+          ...data.initialState,
+          pagination: { paginationModel: { pageSize: 4 } },
+        }}
+        // pageSizeOptions={[4, 8, 16]}
         checkboxSelection
         disableRowSelectionOnClick
         getRowHeight={() => "auto"}

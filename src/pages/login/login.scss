@@ -4,43 +4,49 @@
   align-items: center;
   justify-content: center;
   form {
-    background: slateblue;
+    background: #d1feff;
     width: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
     h1 {
       font-size: 36px;
       text-align: center;
-      color: #fff;
+      color: #7077a1;
+      margin-bottom: 20px;
     }
     .logo {
       display: block;
-      width: 100px;
-      height: 100px;
+      width: 200px;
+      height: 200px;
     }
 
     .input-box {
       position: relative;
       width: 75%;
       height: 50px;
-      margin: 30px 0;
+      margin: 20px 0;
       input {
         width: 100%;
         height: 100%;
         border: none;
         // margin: 10px;
-        border: 2px solid rgba(255, 255, 255, .2);
+        border: 2px solid rgba(72, 71, 148, 0.5);
         border-radius: 20px;
-        // padding: 0 10px;
+        padding: 0 15px;
         background: transparent;
+        color: #485392;
         &::placeholder{
-          color: #fff;
+          color: #485392;
         }
         &:focus {
-          border-color: #4285f4;
+          border-color: #ff9359;
           box-shadow: 0 0 8px rgba(66, 133, 244, 0.5);
+          outline: none;
         }
       }
       .icon{
@@ -49,6 +55,11 @@
         top: 50%;
         transform: translateY(-50%);
         font-size: 16px;
+        color: #7077a1;
+      }
+      .toggle-icon {
+        right: 40px; 
+        cursor: pointer; 
       }
     }
 
@@ -61,11 +72,11 @@
       color: white;
       font-weight: bold;
       cursor: pointer;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+      transition: background-color 0.5s;
 
       &:hover {
         background-color: #ff9359;
-        transition: background-color 0.5s;
       }
     }
 
