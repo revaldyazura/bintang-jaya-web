@@ -26,33 +26,16 @@
   .cellWithImg {
     display: flex;
     align-items: center;
+    
 
     .cellImg {
       width: 100px;
       height: 100px;
       border-radius: 50%;
       object-fit: cover;
-      margin: 10px
+      margin: 0px 5px;
     }
   }
-
-  // .cellWithStatus {
-  //   padding: 5px;
-  //   border-radius: 5px;
-
-  //   &.active {
-  //     color: green;
-  //     background-color: rgba(0, 128, 0, 0.05);
-  //   }
-  //   &.pending {
-  //     color: goldenrod;
-  //     background-color: rgba(189, 189, 3, 0.05);
-  //   }
-  //   &.passive {
-  //     color: crimson;
-  //     background-color: rgba(255, 0, 0, 0.05);
-  //   }
-  // }
 
   .cellAction {
     display: flex;
@@ -102,4 +85,45 @@
 
 .react-confirm-alert-button-group button:hover {
   background-color: #ff772e;
+}
+
+@media (max-width: 768px){
+  .datatable {
+    .datatableTitle {
+      font-size: 22px;
+  
+      .link {
+        font-size: 14px;
+      }
+    }
+    .cellWithImg {
+      display: flex;
+      align-items: center;
+  
+      .cellImg {
+        width: 20px;
+        height: 20px;
+        margin: 10px
+      }
+    }
+    .cellAction {
+      gap: 5px;
+  
+      .viewButton {
+        padding: 2px 5px;
+        border-radius: 5px;
+        color: #202b76;
+        border: 1px dotted rgba(66, 71, 105, 0.596);
+        cursor: pointer;
+      }
+      .deleteButton {
+        padding: 2px 5px;
+        border-radius: 5px;
+        color: crimson;
+        border: 1px dotted rgba(220, 20, 60, 0.6);
+        cursor: pointer;
+      }
+    }
+    
+  }
 }

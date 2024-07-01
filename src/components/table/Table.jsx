@@ -9,22 +9,20 @@ import Paper from "@mui/material/Paper";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const List = ({ product, warna, nomor, berat, jenis, kones, stok, write }) => {
+const List = ({ write }) => {
   const { produkId } = useParams();
-  //  console.log(produkId)
   const [rows, setRows] = useState([]);
-  const hexValue = write.slice(0,2)
-  const intValue = write.slice(2, 8)
-  
+  const hexValue = write.slice(0, 2);
+  const intValue = write.slice(2, 8);
 
   useEffect(() => {
     if (produkId) {
       const productsId = produkId.slice(0, 8);
       const colorId = produkId.slice(8, 11);
-        const typeId = produkId.slice(11, 12);
-        const conesId = produkId.slice(12, 13);
-        const sizeId = produkId.slice(13, 15);
-        const amountId = produkId.slice(15, 16);
+      const typeId = produkId.slice(11, 12);
+      const conesId = produkId.slice(12, 13);
+      const sizeId = produkId.slice(13, 15);
+      const amountId = produkId.slice(15, 16);
 
       const row = {
         productsId,
@@ -48,29 +46,20 @@ const List = ({ product, warna, nomor, berat, jenis, kones, stok, write }) => {
       setRows([row]);
     }
   }, [produkId]);
+
   return (
     <TableContainer component={Paper} className="table">
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
-          {/* {rows.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell className="tableCell" align="center">
-                {row.productsId} (Barang)
-              </TableCell>
-              <TableCell className="tableCell"align="center">{row.colorId} (Warna)</TableCell>
-              <TableCell className="tableCell"align="center">{row.typeId} (Jenis)</TableCell>
-              <TableCell className="tableCell"align="center">{row.conesId} (Kones)</TableCell>
-              <TableCell className="tableCell"align="center">{row.sizeId} (Berat)</TableCell>
-              <TableCell className="tableCell" align="center">{row.amountId} (Stok)</TableCell>
-            </TableRow>
-          ))} */}
-          <TableCell className="tableCell"align="center">Prefix (Hex)</TableCell>
-          <TableCell className="tableCell"align="center">Next (int)</TableCell>
+          <TableRow>
+            <TableCell className="tableCell" align="center">Prefix (Hex)</TableCell>
+            <TableCell className="tableCell" align="center">Next (int)</TableCell>
+          </TableRow>
         </TableHead>
         <TableBody>
           <TableRow>
-            <TableCell className="tableCell" align="center">{hexValue}</TableCell>
-            <TableCell className="tableCell" align="center">{intValue}</TableCell>
+            <TableCell className="tableCell" align="center" data-label="Prefix (Hex)">{hexValue}</TableCell>
+            <TableCell className="tableCell" align="center" data-label="Next (int)">{intValue}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

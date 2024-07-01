@@ -412,10 +412,28 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
     "& .MuiDataGrid-virtualScroller": {
       overflowY: "visible",
     },
-    "& .MuiDataGrid-row": {
-      // overflowY: 'hidden',
-    },
     ...customCheckbox(theme),
+    // Media queries
+  [theme.breakpoints.down('sm')]: {
+    "& .MuiDataGrid-columnHeader": {
+      fontSize: "12px", // Adjust header font size for small screens
+      padding: "8px", // Adjust header padding for small screens
+    },
+    "& .MuiDataGrid-cell": {
+      fontSize: "10px", // Adjust cell font size for small screens
+      padding: "6px", // Adjust cell padding for small screens
+    },
+  },
+  [theme.breakpoints.up('md')]: {
+    "& .MuiDataGrid-columnHeader": {
+      fontSize: "14px", // Default font size for medium and larger screens
+      padding: "10px", // Default padding for medium and larger screens
+    },
+    "& .MuiDataGrid-cell": {
+      fontSize: "12px", // Default font size for medium and larger screens
+      padding: "8px", // Default padding for medium and larger screens
+    },
+  },
   }));
 
   return (
@@ -431,7 +449,7 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
         columns={database !== "stok" ? source.concat(actionColumn) : source}
         initialState={{
           ...data.initialState,
-          pagination: { paginationModel: { pageSize: 4 } },
+          pagination: { paginationModel: { pageSize: 8 } },
         }}
         // pageSizeOptions={[4, 8, 16]}
         checkboxSelection

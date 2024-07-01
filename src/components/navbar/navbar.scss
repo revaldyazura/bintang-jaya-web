@@ -1,36 +1,19 @@
 .navbar {
   height: 50px;
-  border-bottom: 0.5 solid rgb(231, 228, 228);
+  border-bottom: 0.5px solid rgb(231, 228, 228);
   display: flex;
   align-items: center;
-  font: 14px;
   color: #555;
-  // background-color: #d1feff;
   border-bottom: 0.5px solid rgb(230, 227, 227);
+  z-index: 998; /* Ensure navbar is below hamburger menu */
+  
 
   .wrapper {
     width: 100%;
-    padding: 20px;
+    padding: 0 20px; /* Adjusted padding to leave space for hamburger */
     display: flex;
     align-items: center;
     justify-content: flex-end;
-
-    .search {
-      display: flex;
-      align-items: center;
-      border: 0.5px solid lightgray;
-      padding: 3px;
-
-      input {
-        border: none;
-        outline: none;
-        background: transparent;
-
-        &::placeholder {
-          font: 12px;
-        }
-      }
-    }
 
     .items {
       display: flex;
@@ -43,33 +26,19 @@
         position: relative;
         color: #8d96cf;
         font-weight: bold;
-
-        .icon {
-          font-size: 20px;
-        }
-
-        .avatar {
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-        }
-
-        .counter {
-          width: 15px;
-          height: 15px;
-          background-color: red;
-          border-radius: 50%;
-          color: white;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 10px;
-          font-weight: bold;
-          position: absolute;
-          top: -5px;
-          right: -5px;
-        }
       }
     }
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    font-size: 12px;
+    padding-left: 50px; /* Ensure space for the hamburger menu */
+    position: fixed; /* Make navbar fixed */
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
   }
 }

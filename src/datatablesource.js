@@ -52,9 +52,9 @@ export const tokoColumns = [
 ]
 
 export const produkColumns = [
-  { field: "id", headerName: "Kode Tag", flex: 0.1, minWidth: 160 },
+  { field: "id", headerName: "Kode Tag", flex: 0.1, minWidth: 150 },
   {
-    field: "product", headerName: "Barang", minWidth: 200, renderCell: (params) => {
+    field: "product", headerName: "Barang", minWidth: 140, renderCell: (params) => {
       return (
         <div className="cellWithImg">
           {params.row.img && (
@@ -88,10 +88,10 @@ export const produkColumns = [
   },
 ];
 export const stokColumns = [
-  { field: "id", headerName: "ID", flex: 0.1, minWidth: 160 },
+  { field: "id", headerName: "ID", flex: 0.1, minWidth: 150 },
 
   {
-    field: "product", headerName: "Barang", flex: 0.1, minWidth: 160, renderCell: (params) => {
+    field: "product", headerName: "Barang", flex: 0.1, minWidth: 140, renderCell: (params) => {
       return (
         <div className="cellWithImg">
           {params.row.img && (
@@ -102,20 +102,20 @@ export const stokColumns = [
       )
     }
   },
-  { field: "color", headerName: "Warna", flex: 0.1 },
-  { field: "number", headerName: "Nomor Warna", flex: 0.1, minWidth: 100 },
-  { field: "type", headerName: "Tipe", flex: 0.1, minWidth: 50 },
-  { field: "weight", headerName: "Berat/satuan", flex: 0.1, minWidth: 100 },
-  { field: "variant", headerName: "Tinggi cones", flex: 0.1, minWidth: 100 },
+  { field: "color", headerName: "Warna", flex: 0.1, minWidth: 50},
+  { field: "number", headerName: "Nomor Warna", flex: 0.1, minWidth: 50 },
+  { field: "type", headerName: "Tipe", flex: 0.1, minWidth: 59 },
+  { field: "weight", headerName: "Berat/satuan", flex: 0.1, minWidth: 50 },
+  { field: "variant", headerName: "Kones", flex: 0.1, minWidth: 50 },
   { field: "stock", headerName: "Stok", flex: 0.1 },
   { field: "timeStamp", headerName: "Waktu Masuk", flex: 0.1, minWidth: 200 },
 ];
 
 export const kirimColumns = [
-  { field: "id", headerName: "ID", flex: 0.1, minWidth: 160 },
+  { field: "id", headerName: "ID", flex: 0.1, minWidth: 150 },
 
   {
-    field: "product", headerName: "Barang", flex: 0.1, minWidth: 150, renderCell: (params) => {
+    field: "product", headerName: "Barang", flex: 0.1, minWidth: 140, renderCell: (params) => {
       return (
         <div className="cellWithImg">
           {params.row.img && (
@@ -126,12 +126,12 @@ export const kirimColumns = [
       )
     }
   },
-  { field: "color", headerName: "Warna", flex: 0.1 },
-  { field: "number", headerName: "Nomor Warna", flex: 0.1, minWidth: 100 },
-  { field: "type", headerName: "Tipe", flex: 0.1, minWidth: 50 },
-  { field: "weight", headerName: "Berat/satuan", flex: 0.1, minWidth: 100 },
-  { field: "variant", headerName: "Kones", flex: 0.1, minWidth: 100 },
+  { field: "color", headerName: "Warna", flex: 0.1, minWidth: 50},
+  { field: "number", headerName: "Nomor Warna", flex: 0.1, minWidth: 50 },
+  { field: "type", headerName: "Tipe", flex: 0.1, minWidth: 59 },
+  { field: "weight", headerName: "Berat/satuan", flex: 0.1, minWidth: 50 },
+  { field: "variant", headerName: "Kones", flex: 0.1, minWidth: 50 },
   { field: "stock", headerName: "Stok", flex: 0.1 },
-  { field: "client", headerName: "Toko", flex: 0.1, minWidth: 70 },
+  { field: "client", headerName: "Toko", flex: 0.1, minWidth: 50 },
   { field: "timeStamp", headerName: "Waktu Kirim", flex: 0.1, minWidth: 150 },
 ];

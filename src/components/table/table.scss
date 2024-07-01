@@ -1,28 +1,57 @@
 .table {
-  .cellWrapper {
-    display: flex;
-    align-items: center;
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
 
-    .image {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      margin-right: 10px;
-      object-fit: cover;
-    }
+  .tableCell {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
   }
 
-  .status {
-    padding: 5px;
-    border-radius: 5px;
+  // Responsive styles
+  @media (max-width: 768px) {
+    .table {
+      width: 100%;
+      overflow-x: auto;
+      display: block;
 
-    &.Approved {
-      color: green;
-      background-color: rgba(0, 128, 0, 0.151);
+      .tableCell {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 0;
+      }
     }
-    &.Pending {
-      color: goldenrod;
-      background-color: rgba(189, 189, 3, 0.103);
+
+    .table thead {
+      display: none;
+    }
+
+    .table tbody {
+      display: block;
+
+      .tableRow {
+        display: block;
+        margin-bottom: 15px;
+      }
+
+      .tableCell {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        font-size: 14px;
+
+        &::before {
+          content: attr(data-label);
+          flex-basis: 50%;
+          text-align: left;
+          font-weight: bold;
+        }
+      }
     }
   }
 }

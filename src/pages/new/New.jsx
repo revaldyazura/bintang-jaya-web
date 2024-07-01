@@ -56,7 +56,7 @@ const New = ({ inputs, title, database }) => {
         }));
       }
       setFetching(false);
-    }, 30000); // delay 30 seconds
+    }, 10000); // delay 10 seconds
   };
 
   const handleClosePopup = () => {

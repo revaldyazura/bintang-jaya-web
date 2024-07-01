@@ -53,7 +53,7 @@
           .getData {
             width: 40%;
             display: flex;
-            gap: 10;
+            gap: 10px;
             align-items: end;
             button {
               margin-right: 5px;
@@ -184,6 +184,54 @@
       &:hover {
         background-color: #ff9359;
         transition: 0.5s;
+      }
+    }
+  }
+
+  // Responsive styles
+  @media (max-width: 768px) {
+    flex-direction: column;
+
+    .newContainer {
+      margin-top: 50px;
+      padding: 10px;
+
+      .top {
+        flex-direction: column;
+        align-items: flex-start;
+
+        h1 {
+          font-size: 18px;
+        }
+        .top-right {
+          position: static;
+          margin: 10px 0 0 0;
+        }
+      }
+      .bottom {
+        flex-direction: column;
+
+        .left,
+        .right {
+          flex: none;
+          width: 100%;
+          text-align: center;
+
+          img {
+            width: 150px;
+            height: 150px;
+          }
+        }
+
+        .right {
+          form {
+            .getData,
+            .formRow,
+            .formInput {
+              width: 100%;
+            }
+          }
+        }
       }
     }
   }

@@ -34,7 +34,6 @@
         width: 100%;
         height: 100%;
         border: none;
-        // margin: 10px;
         border: 2px solid rgba(72, 71, 148, 0.5);
         border-radius: 20px;
         padding: 0 15px;
@@ -64,7 +63,7 @@
     }
 
     button {
-      width: 200px;
+      width: 50%;
       height: 40px; // Slightly larger button for better clickability
       border: none;
       border-radius: 20px;
@@ -88,11 +87,35 @@
   }
 
   // Responsive adjustments
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     form {
-      input,
+      width: 75%; // Makes the form width responsive
+
+      h1 {
+        font-size: 28px; // Adjust title font size
+      }
+
+      .logo {
+        width: 150px;
+        height: 150px;
+      }
+
+      .input-box {
+        input {
+          padding: 0 10px; // Adjust padding for smaller screens
+        }
+
+        .icon {
+          right: 10px;
+        }
+
+        .toggle-icon {
+          right: 30px;
+        }
+      }
+
       button {
-        width: 90%; // Makes input and button width responsive
+        width: 50%; // Makes button width responsive
       }
     }
   }

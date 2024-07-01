@@ -1,3 +1,4 @@
+/* Base styles for sidebar */
 .sidebar {
   flex: 1;
   border-right: 0.5px solid rgb(230, 227, 227);
@@ -5,33 +6,36 @@
   min-width: 17vh;
   max-width: 20vh;
   background-color: #d1feff;
-  
+  transition: transform 0.3s ease-in-out;
+  z-index: 999;
+
   .top {
     height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
     
+
     .logo {
       font-size: 20px;
       font-weight: bold;
       color: #7077a1;
     }
   }
-  
+
   hr {
     height: 0;
     border: 0.5px solid rgb(230, 227, 227);
   }
-  
+
   .center {
     padding-left: 10px;
-    
+
     ul {
       list-style: none;
       margin: 0;
       padding: 0;
-      
+
       .title {
         font-size: 10px;
         font-weight: bold;
@@ -39,7 +43,7 @@
         margin-top: 15px;
         margin-bottom: 5px;
       }
-      
+
       .nav-item {
         text-decoration: none;
         display: flex;
@@ -47,7 +51,7 @@
           border-left: 2mm ridge #ff772e;
           border-radius: 2px;
           background-color: #ffff;
-          width: 100%;
+          // width: 100%;
         }
       }
       li {
@@ -55,7 +59,7 @@
         align-items: center;
         padding: 5px;
         cursor: pointer;
-        
+
         &:hover {
           background-color: #ece8ff;
         }
@@ -94,9 +98,67 @@
       &:nth-child(2) {
         background-color: #333;
       }
-      // &:nth-child(3){
-      //   background-color: darkblue;
-      // }
     }
+  }
+}
+
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 1000;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+
+  .bar {
+    width: 100%;
+    height: 3px;
+    background-color: #8d96cf;
+    border-radius: 10px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+
+    &.open:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+      background-color: #7077a1;
+    }
+    &.open:nth-child(2) {
+      opacity: 0;
+      background-color: #7077a1;
+    }
+    &.open:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+      background-color: #7077a1;
+    }
+  }
+}
+
+/* Media queries for mobile devices */
+/* Media queries for mobile devices */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    max-width: 50vh;
+    transform: translateX(-100%);
+    z-index: 999;
+    .top {
+      padding-left: 10px;
+    }
+    &.open {
+      transform: translateX(0);
+      width: 50vw; /* Ensure sidebar takes half the screen width */
+    }
+  }
+
+  .hamburger-menu {
+    display: flex;
+    justify-content: space-evenly;
+    
   }
 }
