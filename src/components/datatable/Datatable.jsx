@@ -1,27 +1,22 @@
 import "./datatable.scss";
 import { DataGrid } from "@mui/x-data-grid";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import {
   collection,
-  getDocs,
   deleteDoc,
   doc,
   onSnapshot,
-  setDoc,
-  serverTimestamp,
-  updateDoc,
   getDoc,
 } from "firebase/firestore";
-import { deleteObject, getStorage, ref } from "firebase/storage";
+// import { getStorage } from "firebase/storage";
 import { db } from "../../firebase";
-import { Box, styled } from "@mui/material";
+import {  styled } from "@mui/material";
 import { confirmAlert } from "react-confirm-alert";
 
 const Datatable = ({ source, database, title, newPath, idPath }) => {
   const [data, setData] = useState([]);
-  const navigate = useNavigate();
-  const storage = getStorage();
+  // const storage = getStorage();
 
   useEffect(() => {
     // LISTEN REAL-TIME
@@ -399,7 +394,7 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
     "& .MuiDataGrid-cell": {
       color: "rgba(0,0,0,.85)",
       textAlign: "center",
-      width: "100px",
+      width: "20px",
       whiteSpace: "normal", // Allow wrapping
       wordWrap: "break-word", // Break long words
     },
@@ -416,24 +411,24 @@ const Datatable = ({ source, database, title, newPath, idPath }) => {
     // Media queries
   [theme.breakpoints.down('sm')]: {
     "& .MuiDataGrid-columnHeader": {
-      fontSize: "12px", // Adjust header font size for small screens
-      padding: "8px", // Adjust header padding for small screens
+      fontSize: "14px", // Adjust header font size for small screens
+      padding: "10px", // Adjust header padding for small screens
     },
     "& .MuiDataGrid-cell": {
-      fontSize: "10px", // Adjust cell font size for small screens
-      padding: "6px", // Adjust cell padding for small screens
+      fontSize: "12px", // Adjust cell font size for small screens
+      padding: "8px", // Adjust cell padding for small screens
     },
   },
-  [theme.breakpoints.up('md')]: {
-    "& .MuiDataGrid-columnHeader": {
-      fontSize: "14px", // Default font size for medium and larger screens
-      padding: "10px", // Default padding for medium and larger screens
-    },
-    "& .MuiDataGrid-cell": {
-      fontSize: "12px", // Default font size for medium and larger screens
-      padding: "8px", // Default padding for medium and larger screens
-    },
-  },
+  // [theme.breakpoints.up('md')]: {
+  //   "& .MuiDataGrid-columnHeader": {
+  //     fontSize: "14px", // Default font size for medium and larger screens
+  //     padding: "10px", // Default padding for medium and larger screens
+  //   },
+  //   "& .MuiDataGrid-cell": {
+  //     fontSize: "12px", // Default font size for medium and larger screens
+  //     padding: "8px", // Default padding for medium and larger screens
+  //   },
+  // },
   }));
 
   return (

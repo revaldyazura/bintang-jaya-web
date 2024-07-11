@@ -47,12 +47,18 @@
       .nav-item {
         text-decoration: none;
         display: flex;
+        &:hover {
+          background-color: #ece8ff;
+        }
         &.active {
           border-left: 2mm ridge #ff772e;
           border-radius: 2px;
           background-color: #ffff;
-          // width: 100%;
+          width: 100%;
         }
+      }
+      a{
+        text-decoration: none;
       }
       li {
         display: flex;
@@ -137,7 +143,6 @@
 }
 
 /* Media queries for mobile devices */
-/* Media queries for mobile devices */
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
@@ -152,7 +157,7 @@
     }
     &.open {
       transform: translateX(0);
-      width: 50vw; /* Ensure sidebar takes half the screen width */
+      width: 100vw; 
     }
   }
 

@@ -485,9 +485,7 @@ const New = ({ inputs, title, database }) => {
         <Navbar disabled={fetching} />
         <div className="top">
           <h1>{title}</h1>
-          {(database === "products" ||
-            database === "stok" ||
-            database === "kirim") && (
+          {database !== "users" && (
             <div className="top-right">
               <button
                 className="orange-button"
@@ -498,7 +496,32 @@ const New = ({ inputs, title, database }) => {
               </button>
             </div>
           )}
-
+          {guide &&
+            database !== "products" &&
+            database !== "stok" &&
+            database !== "kirim" && (
+              <div className="popup show">
+                <div className="popup-inner">
+                  <p>Panduan:</p>
+                  <ul>
+                    
+                    <li>
+                      Ikuti tabel panduan:{" "}
+                      <a
+                        href="https://docs.google.com/spreadsheets/d/1zcfO4er1JyRPriUbqyzxFwQUKJukeQBK13Y6rLKJoV0/edit#gid=0&range=A1:P24"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                      >
+                        klik di sini
+                      </a>
+                    </li>
+                  </ul>
+                  <button onClick={handleClosePopup} className="orange-button">
+                    Tutup
+                  </button>
+                </div>
+              </div>
+            )}
           {guide && database === "products" && (
             <div className="popup show">
               <div className="popup-inner">
@@ -518,11 +541,11 @@ const New = ({ inputs, title, database }) => {
                   </li>
                   <li>
                     Jika data belum tersedia, tambahkan data pada masing-masing
-                    laman data.
+                    halaman data.
                   </li>
                   <li>
                     Setelah menambahkan kode tag, lakukan re-write sesuai
-                    panduan pada laman "Detail".
+                    panduan pada halaman "Detail".
                   </li>
                 </ul>
                 {/* <img

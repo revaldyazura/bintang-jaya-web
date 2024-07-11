@@ -1,12 +1,11 @@
 import "./single.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import Chart from "../../components/chart/Chart";
 import List from "../../components/table/Table";
 import { useEffect, useState } from "react";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const Single = ({ database }) => {
   const { produkId } = useParams();
@@ -19,10 +18,6 @@ const Single = ({ database }) => {
   const sizeId = produkId.slice(13, 15);
   const amountId = produkId.slice(15, 16);
   const writeTag = produkId.slice(8, 16);
-  const navigate = useNavigate();
-  const handleBack = () => {
-    navigate("/kode");
-  };
   const handleGuide = () => {
     setGuide(true);
   };
@@ -184,11 +179,13 @@ const Single = ({ database }) => {
                 <div className="popup-inner">
                   <p>Panduan Re-Write Tag di Aplikasi Electron:</p>
                   <div className="imgContainer">
-                    <img style={{width: "25vw"}}
+                    <img
+                      style={{ width: "25vw" }}
                       src="https://firebasestorage.googleapis.com/v0/b/obras-7eb0b.appspot.com/o/Electron%20HW-VX6330K%20demo.png?alt=media&token=f2909959-29d0-47a7-8432-f373560f6ef8"
                       alt="Panduan Kode"
                     />
-                    <img style={{width: "40vw"}}
+                    <img
+                      style={{ width: "40vw" }}
                       src="https://firebasestorage.googleapis.com/v0/b/obras-7eb0b.appspot.com/o/Electron%20Write%20UHF%20Tag.png?alt=media&token=0978a799-77d9-4879-a340-63c481ed4217"
                       alt="Panduan Kode"
                     />
@@ -199,25 +196,29 @@ const Single = ({ database }) => {
                       Hubungkan Reader dan Laptop Menggunakan Kabel RS232 to USB
                     </li>
                     <li>
-                      Buka Aplikasi Electron HwVx6330K Demo, Klik "Open COM Port".  
+                      Buka Aplikasi Electron HwVx6330K Demo, Klik "Open COM
+                      Port".
                     </li>
                     <li>
-                    Setelah itu Klik "Get Work Mode Parameter", Atur Work Mode ke Answer Mode.
+                      Setelah itu Klik "Get Work Mode Parameter", Atur Work Mode
+                      ke Answer Mode.
+                    </li>
+                    <li>Setelah itu Klik "ClosePort", lalu Tutup Aplikasi.</li>
+                    <li>
+                      Buka Aplikasi Electron Write UHF Tag, Klik Start pada
+                      Kolom "New Tag".
                     </li>
                     <li>
-                    Setelah itu Klik "ClosePort", lalu Tutup Aplikasi.
+                      Kemudian Klik Start pada Kolom "Randomized Tag", lalu Klik
+                      Stop di Tombol Sebelumnya
                     </li>
                     <li>
-                      Buka Aplikasi Electron Write UHF Tag, Klik Start pada Kolom "New Tag".
+                      Pada Kolom "Written Tag" Masukkan Angka Prefix(hex) dan
+                      Next(int) sesuai di Tabel Detail, lalu Klik Start
                     </li>
                     <li>
-                      Kemudian Klik Start pada Kolom "Randomized Tag", lalu Klik Stop di Tombol Sebelumnya
-                    </li>
-                    <li>
-                      Pada Kolom "Written Tag" Masukkan Angka Prefix(hex) dan Next(int) sesuai di Tabel Detail, lalu Klik Start
-                    </li>
-                    <li>
-                      Tag Berhasil dilakukan re-Write Jika Kolom Bertambah Baris Angka Berwarna Hijau, Jika Berhasil, Tutup Aplikasi
+                      Tag Berhasil dilakukan re-Write Jika Kolom Bertambah Baris
+                      Angka Berwarna Hijau, Jika Berhasil, Tutup Aplikasi
                     </li>
                   </ul>
                   <button onClick={handleClosePopup}>Tutup</button>

@@ -89,7 +89,7 @@ function App() {
             <Route path="jumlah">
               <Route index element={
                 <RequireAuth>
-                  <List source={jumlahColumns} db="amount" title="Data Kode Untuk Stok" newPath="/jumlah/tambah" idPath="/jumlah/:Id" />
+                  <List source={jumlahColumns} db="amount" title="Data Kode Untuk Jumlah Stok" newPath="/jumlah/tambah" idPath="/jumlah/:Id" />
                 </RequireAuth>} />
               <Route path=":jumlahId" element={
                 <RequireAuth>
@@ -97,7 +97,7 @@ function App() {
                 </RequireAuth>} />
               <Route path="tambah" element={
                 <RequireAuth>
-                  <New inputs={jumlahInputs} title="Tambah Data Kode Untuk Stok" database="amount" />
+                  <New inputs={jumlahInputs} title="Tambah Data Kode Untuk Jumlah Stok" database="amount" />
                 </RequireAuth>} />
             </Route>
             <Route path="toko">

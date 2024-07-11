@@ -1,30 +1,9 @@
 export const userColumns = [
-  // { field: "id", headerName: "ID", flex: 0.1, minWidth: 270 },
-  // {
-  //   field: "user", headerName: "Nama", flex: 0.1, renderCell: (params) => {
-  //     return (
-  //       <div className="cellWithImg">
-  //         <img className="cellImg" src={params.row.img} alt="avatar" />
-  //         {params.row.username}
-  //       </div>
-  //     )
-  //   }
-  // },
   {
     field: "username", headerName: "Nama", flex: 0.1
   },
   { field: "email", headerName: "Email", flex: 0.1 },
-  { field: "position", headerName: "Jabatan", flex: 0.1 },
-  // {
-  //   field: "status", headerName: "Status", width: 160,
-  //   renderCell: (params) => {
-  //     return (
-  //       <div className={`cellWithStatus ${params.row.status}`}>
-  //         {params.row.status}
-  //       </div>
-  //     )
-  //   }
-  // },
+  { field: "position", headerName: "Jabatan", flex: 0.1 }
 ];
 export const warnaColumns = [
   { field: "id", headerName: "Kode", flex: 0.1, minWidth: 70 },
@@ -54,7 +33,7 @@ export const tokoColumns = [
 export const produkColumns = [
   { field: "id", headerName: "Kode Tag", flex: 0.1, minWidth: 150 },
   {
-    field: "product", headerName: "Barang", minWidth: 140, renderCell: (params) => {
+    field: "product", headerName: "Barang", minWidth: 140, flex: 0.1, renderCell: (params) => {
       return (
         <div className="cellWithImg">
           {params.row.img && (
@@ -102,7 +81,7 @@ export const stokColumns = [
       )
     }
   },
-  { field: "color", headerName: "Warna", flex: 0.1, minWidth: 50},
+  { field: "color", headerName: "Warna", flex: 0.1, minWidth: 50 },
   { field: "number", headerName: "Nomor Warna", flex: 0.1, minWidth: 50 },
   { field: "type", headerName: "Tipe", flex: 0.1, minWidth: 59 },
   { field: "weight", headerName: "Berat/satuan", flex: 0.1, minWidth: 50 },
@@ -126,7 +105,7 @@ export const kirimColumns = [
       )
     }
   },
-  { field: "color", headerName: "Warna", flex: 0.1, minWidth: 50},
+  { field: "color", headerName: "Warna", flex: 0.1, minWidth: 50 },
   { field: "number", headerName: "Nomor Warna", flex: 0.1, minWidth: 50 },
   { field: "type", headerName: "Tipe", flex: 0.1, minWidth: 59 },
   { field: "weight", headerName: "Berat/satuan", flex: 0.1, minWidth: 50 },

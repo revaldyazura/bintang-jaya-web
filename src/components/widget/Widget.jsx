@@ -2,7 +2,6 @@ import "./widget.scss";
 import StoreIcon from "@mui/icons-material/Store";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { useEffect, useState } from "react";
 import { collection, query, where, getDocs} from "firebase/firestore";
 import { db } from "../../firebase";
@@ -34,7 +33,7 @@ const Widget = ({ type, idPath }) => {
       data = {
         title: "STOK",
         isMoney: false,
-        link: "Lihat Data Stok",
+        link: "Lihat Sisa Stok",
         query: "stok",
         icon: (
           <StoreIcon
@@ -71,27 +70,27 @@ const Widget = ({ type, idPath }) => {
   useEffect(() => {
     const fetchData = async () => {
       const today = new Date();
-      const lastMonth = new Date(new Date().setMonth(today.getMonth() - 1));
-      const prevMonth = new Date(new Date().setMonth(today.getMonth() - 2));
+      // const lastMonth = new Date(new Date().setMonth(today.getMonth() - 1));
+      // const prevMonth = new Date(new Date().setMonth(today.getMonth() - 2));
 
-      const lastMonthQuery = query(
-        collection(db, data.query),
-        where("timeStamp", "<=", today),
-        where("timeStamp", ">", lastMonth)
-      );
-      const prevMonthQuery = query(
-        collection(db, data.query),
-        where("timeStamp", "<=", lastMonth),
-        where("timeStamp", ">", prevMonth)
-      );
+      // const lastMonthQuery = query(
+      //   collection(db, data.query),
+      //   where("timeStamp", "<=", today),
+      //   where("timeStamp", ">", lastMonth)
+      // );
+      // const prevMonthQuery = query(
+      //   collection(db, data.query),
+      //   where("timeStamp", "<=", lastMonth),
+      //   where("timeStamp", ">", prevMonth)
+      // );
 
       const totalDataQuery = query(
         collection(db, data.query),
         where("timeStamp", "<=", today)
       );
 
-      const lastMonthData = await getDocs(lastMonthQuery);
-      const prevMonthData = await getDocs(prevMonthQuery);
+      // const lastMonthData = await getDocs(lastMonthQuery);
+      // const prevMonthData = await getDocs(prevMonthQuery);
       const totalData = await getDocs(totalDataQuery);
 
 

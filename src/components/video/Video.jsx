@@ -1,13 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./video.scss";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import { SketchPicker } from "react-color";
+import { AuthContext } from "../../context/AuthContext";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:5000");
 
 const Video = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [currentColor, setCurrentColor] = useState({ r: 255, g: 255, b: 255 });
   const [imgLoaded, setImgLoaded] = useState(false);
+  const { currentUser } = useContext(AuthContext);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isVideoActive, setIsVideoActive] = useState(false);
+  // const [flaskBaseUrl, setFlaskBaseUrl] = useState("");
+
+  const uid = currentUser?.uid;
 
   const handleChange = (color) => {
     setCurrentColor(color.rgb);
@@ -33,11 +43,7 @@ const Video = () => {
   const handleColor = async (e) => {
     e.preventDefault();
     const data = {
-      bgrValues: [
-        currentColor.b,
-        currentColor.g,
-        currentColor.r,
-      ],
+      bgrValues: [currentColor.b, currentColor.g, currentColor.r],
     };
 
     try {
@@ -60,8 +66,7 @@ const Video = () => {
 
   const pickerStyles = {
     default: {
-      picker: {
-      },
+      picker: {},
     },
   };
 
@@ -85,14 +90,19 @@ const Video = () => {
 
   const handleActivate = async () => {
     try {
-      const response = await fetch("/video");
+      const response = await fetch("/activate_camera", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       if (response.ok) {
         const url = "/video";
         setVideoUrl(url);
-        localStorage.setItem("videoUrl", url);
+        setIsVideoActive(true);
         setImgLoaded(false); // Reset image loaded state
       } else {
-        console.error("Failed to fetch video URL");
+        console.error("Failed to activate camera");
       }
     } catch (error) {
       console.error("Network error:", error);
@@ -101,7 +111,7 @@ const Video = () => {
 
   const handleShutdown = async () => {
     try {
-      const response = await fetch("/release", {
+      const response = await fetch("/deactivate_camera", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,8 +119,10 @@ const Video = () => {
       });
       const result = await response.json();
       if (response.ok) {
-        setVideoUrl("https://firebasestorage.googleapis.com/v0/b/obras-7eb0b.appspot.com/o/there-is-no-connected-camera.jpg?alt=media&token=e512eeb6-d19d-4826-abca-bc54169aa2ee");
-        localStorage.removeItem("videoUrl");
+        setVideoUrl(
+          "https://firebasestorage.googleapis.com/v0/b/obras-7eb0b.appspot.com/o/there-is-no-connected-camera.jpg?alt=media&token=e512eeb6-d19d-4826-abca-bc54169aa2ee"
+        );
+        setIsVideoActive(false);
         console.log(result.message);
       } else {
         console.error(result.message);
@@ -121,12 +133,58 @@ const Video = () => {
   };
 
   useEffect(() => {
-    const storedVideoUrl = localStorage.getItem("videoUrl");
-    if (storedVideoUrl) {
-      setVideoUrl(storedVideoUrl);
+    if (uid) {
+      setIsAdmin(uid === "EaMqYgiaC0cTno7ch8W5Wi3f2np2");
     }
+  }, [uid]);
+
+  // useEffect(() => {
+  //   const fetchConfig = async () => {
+  //     try {
+  //       const response = await fetch('https://revaldyazura.github.io/config-flask/config.json');
+  //       const data = await response.json();
+  //       setFlaskBaseUrl(data.flaskBaseUrl);
+  //     } catch (error) {
+  //       console.error("Failed to fetch configuration:", error);
+  //     }
+  //   };
+
+  //   fetchConfig();
+  // }, []);
+
+  useEffect(() => {
+    const checkCameraStatus = async () => {
+      try {
+        const response = await fetch("/camera_status");
+        const result = await response.json();
+        if (response.ok) {
+          setIsVideoActive(result.isVideoActive);
+          if (result.isVideoActive) {
+            setVideoUrl("/video");
+          } else {
+            setVideoUrl("https://firebasestorage.googleapis.com/v0/b/obras-7eb0b.appspot.com/o/there-is-no-connected-camera.jpg?alt=media&token=e512eeb6-d19d-4826-abca-bc54169aa2ee");
+          }
+        } else {
+          console.error("Failed to fetch camera status");
+        }
+      } catch (error) {
+        console.error("Network error:", error);
+      }
+    };
+  
+    checkCameraStatus();
+  
+    socket.on('camera_status', (data) => {  // Listen for 'camera_status' event
+      setIsVideoActive(data.isVideoActive);
+      if (data.isVideoActive) {
+        setVideoUrl("/video");
+      } else {
+        setVideoUrl("https://firebasestorage.googleapis.com/v0/b/obras-7eb0b.appspot.com/o/there-is-no-connected-camera.jpg?alt=media&token=e512eeb6-d19d-4826-abca-bc54169aa2ee");
+      }
+    });
+  
     return () => {
-      localStorage.removeItem("videoUrl");
+      socket.off('camera_status');  // Clean up the event listener on unmount
     };
   }, []);
 
@@ -135,10 +193,10 @@ const Video = () => {
       <div className="left">
         <span className="videoTitle">TAMPILAN KAMERA</span>
         <span className="cam">
-          {videoUrl === "/video" ? (
+          {isVideoActive ? (
             <img
               src={videoUrl}
-              alt="Video tidak tersedia"
+              alt="Kamera belum tersedia"
               onClick={handlePickColor}
               onLoad={() => setImgLoaded(true)}
             />
@@ -151,8 +209,7 @@ const Video = () => {
         </span>
       </div>
       <div className="center">
-        <form onSubmit={handleColor} id="formColor">
-        </form>
+        <form onSubmit={handleColor} id="formColor"></form>
         <div className="colorPicker">
           <SketchPicker
             color={currentColor}
@@ -162,20 +219,35 @@ const Video = () => {
           />
         </div>
         <div className="button">
-          <button onClick={handleActivate} id="activate">
-            Aktifkan Kamera
-          </button>
-          <button type="submit" id="change" form="formColor" disabled={!imgLoaded}>
+          {isAdmin && (
+            <button onClick={handleActivate} id="activate">
+              Aktifkan Kamera
+            </button>
+          )}
+          <button
+            type="submit"
+            id="change"
+            form="formColor"
+            disabled={!imgLoaded}
+          >
             Atur Tampilan
           </button>
           <button onClick={handleReset} id="reset" disabled={!imgLoaded}>
             Reset Tampilan
           </button>
-          <button onClick={handleShutdown} id="shutdown" disabled={!imgLoaded}>Matikan Kamera</button> 
+          {isAdmin && (
+            <button
+              onClick={handleShutdown}
+              id="shutdown"
+              disabled={!imgLoaded}
+            >
+              Matikan Kamera
+            </button>
+          )}
         </div>
       </div>
       <div className="right">
-      {videoUrl === "/video" ? (
+        {isVideoActive ? (
           <VideocamIcon
             className="icon"
             style={{

@@ -1,0 +1,16 @@
+{
+  "projects": {
+    "default": "obras-7eb0b"
+  },
+  "targets": {
+    "obras-7eb0b": {
+      "hosting": {
+        "bintang-jaya-obras": [
+          "1:722535186211:web:92bd4aee637d6fece31696"
+        ]
+      }
+    }
+  },
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}
