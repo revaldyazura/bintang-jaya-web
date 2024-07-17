@@ -56,7 +56,7 @@ const New = ({ inputs, title, database }) => {
         }));
       }
       setFetching(false);
-    }, 10000); // delay 10 seconds
+    }, 30000); // delay 30 seconds
   };
 
   const handleClosePopup = () => {
@@ -330,22 +330,24 @@ const New = ({ inputs, title, database }) => {
                   };
                   return fetchedData;
                 } else {
-                  console.log("no doc found in details collection");
+                  console.log("no doc found in amount collection");
                 }
               } else {
-                console.log("no doc found in cones collection");
+                console.log("no doc found in size collection");
               }
             } else {
-              console.log("no doc found in size collection");
+              console.log("no doc found in cones collection");
             }
           } else {
-            console.log("no doc found in color collection");
+            console.log("no doc found in type collection");
           }
           return productsData;
         } else {
-          console.log("No matching document found in 'products' collection.");
-          return null;
+          console.log("No matching document found in 'color' collection.");
         }
+      } else {
+        console.log("No matching document found in 'products' collection.");
+        return null;
       }
     } catch (error) {
       console.error("Error fetching data from 'products' collection:", error);
@@ -485,7 +487,7 @@ const New = ({ inputs, title, database }) => {
         <Navbar disabled={fetching} />
         <div className="top">
           <h1>{title}</h1>
-          {database !== "users" && (
+          {database !== "toko" && database !== "users" && (
             <div className="top-right">
               <button
                 className="orange-button"
@@ -499,12 +501,13 @@ const New = ({ inputs, title, database }) => {
           {guide &&
             database !== "products" &&
             database !== "stok" &&
-            database !== "kirim" && (
+            database !== "kirim" &&
+            database !== "toko" &&
+            database !== "users" && (
               <div className="popup show">
                 <div className="popup-inner">
                   <p>Panduan:</p>
                   <ul>
-                    
                     <li>
                       Ikuti tabel panduan:{" "}
                       <a

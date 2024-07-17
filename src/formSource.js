@@ -270,21 +270,21 @@ export const stokInputs = [
     type: "text",
     placeholder: "(Pink)",
     readOnly: true
-    },
-    {
-      id: "number",
-      label: "Nomor Warna",
-      type: "text",
-      placeholder: "(2050)",
-      readOnly: true
-    },
-      {
-        id: "type",
-        label: "Jenis Benang Obras",
-        type: "text",
-        placeholder: "(Gemilang / Hosan)",
-        readOnly: true
-      },
+  },
+  {
+    id: "number",
+    label: "Nomor Warna",
+    type: "text",
+    placeholder: "(2050)",
+    readOnly: true
+  },
+  {
+    id: "type",
+    label: "Jenis Benang Obras",
+    type: "text",
+    placeholder: "(Gemilang / Hosan)",
+    readOnly: true
+  },
   {
     id: "stock",
     label: "Stok",
@@ -330,21 +330,21 @@ export const kirimInputs = [
     type: "text",
     placeholder: "(Pink)",
     readOnly: true
-    },
-    {
-      id: "number",
-      label: "Nomor Warna",
-      type: "text",
-      placeholder: "(2050)",
-      readOnly: true
-    },
-      {
-        id: "type",
-        label: "Jenis Benang Obras",
-        type: "text",
-        placeholder: "(Gemilang / Hosan)",
-        readOnly: true
-      },
+  },
+  {
+    id: "number",
+    label: "Nomor Warna",
+    type: "text",
+    placeholder: "(2050)",
+    readOnly: true
+  },
+  {
+    id: "type",
+    label: "Jenis Benang Obras",
+    type: "text",
+    placeholder: "(Gemilang / Hosan)",
+    readOnly: true
+  },
   {
     id: "stock",
     label: "Stok",

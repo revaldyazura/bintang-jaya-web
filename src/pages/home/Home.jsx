@@ -20,10 +20,10 @@ const Home = () => {
             uid === "RedXGnEg9cTjjV8i6lKC0yQVf3H3") && (
             <Widget type="user" idPath="pengguna" />
           )}
-          {uid === "RedXGnEg9cTjjV8i6lKC0yQVf3H3" && (
+          {uid !== "EaMqYgiaC0cTno7ch8W5Wi3f2np2" && (
             <Widget type="stok" idPath="stok" />
           )}
-          {uid === "RedXGnEg9cTjjV8i6lKC0yQVf3H3" && (<Widget type="kirim" idPath="kirim" />)}
+          {uid !== "EaMqYgiaC0cTno7ch8W5Wi3f2np2" && (<Widget type="kirim" idPath="kirim" />)}
         </div>
         <div className="videoContainer">
           <Video />
