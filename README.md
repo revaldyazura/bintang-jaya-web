@@ -1,12 +1,12 @@
-# Getting Started with Create React App
+# Bintang Jaya Website
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the Bintang Jaya Website repository. This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Getting Started
 
-In the project directory, you can run:
+To get started with the project, follow these steps:
 
-### `npm start`
+### Prerequisites
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
