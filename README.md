@@ -1,7 +1,7 @@
 # Bintang Jaya Website
 
 Welcome to the Bintang Jaya Website repository.\
-This project purpose is for my thesis project\
+This website is specified for bintang jaya factory.\
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Getting Started
