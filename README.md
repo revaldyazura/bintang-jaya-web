@@ -10,11 +10,11 @@ To get started with the project, follow these steps:
 
 ### Prerequisites
 
-Ensure you have Node.js and npm installed. You can download them from [here](https://nodejs.org/)\
+Ensure you have Node.js and npm installed. You can download them from [here](https://nodejs.org/) \
 
 ### Installation
 
-Clone the repository and install the dependencies:\
+Clone the repository and install the dependencies: \
 ```bash
 git clone https://github.com/your-username/your-repository.git
 cd your-repository
@@ -23,7 +23,7 @@ npm install
 
 ### Running the App
 
-To start the development server, run:\
+To start the development server, run: \
 ```bash
 npm start
 ```
@@ -31,7 +31,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser. 
 
 ### Running Tests
 
-To launch the test runner in the interactive watch mode, run:\
+To launch the test runner in the interactive watch mode, run: \
 ```bash
 npm test
 ```
@@ -39,14 +39,14 @@ For more information, see the [running test](https://facebook.github.io/create-r
 
 ## Building for Production
 
-To build the app for production, run:\
+To build the app for production, run: \
 ```bash
 npm run build
 ```
-Builds the app for production to the `build` folder.\
+Builds the app for production to the `build` folder. \
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
+The build is minified and the filenames include the hashes. \
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
