@@ -9,7 +9,7 @@ import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_KEY,
-  // apiKey: "AIzaSyBH0cPzGCSELbqEAcEu4xiGZoJZGkQDwqw",
+  // apiKey: "AIzaSyBH0cPzGCSELbqEAcEu4xiGZoJZGkQDwqw"
   authDomain: "obras-7eb0b.firebaseapp.com",
   projectId: "obras-7eb0b",
   storageBucket: "obras-7eb0b.appspot.com",
