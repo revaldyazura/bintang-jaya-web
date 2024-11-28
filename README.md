@@ -16,7 +16,7 @@ Ensure you have Node.js and npm installed. You can download them from [here](htt
 
 Clone the repository and install the dependencies: 
 ```bash
-git clone [https://github.com/revaldyazura/bintang-jaya-web.git](https://github.com/revaldyazura/bintang-jaya-web.git)
+git clone https://github.com/revaldyazura/bintang-jaya-web.git
 cd bintang-jaya-web
 npm install
 ```
