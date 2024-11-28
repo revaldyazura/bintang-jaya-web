@@ -16,8 +16,8 @@ Ensure you have Node.js and npm installed. You can download them from [here](htt
 
 Clone the repository and install the dependencies: 
 ```bash
-git clone https://github.com/your-username/your-repository.git
-cd your-repository
+git clone [https://github.com/revaldyazura/bintang-jaya-web.git](https://github.com/revaldyazura/bintang-jaya-web.git)
+cd bintang-jaya-web
 npm install
 ```
 
@@ -39,7 +39,7 @@ For more information, see the [running test](https://facebook.github.io/create-r
 
 ## Building for Production
 
-To build the app for production, run: \
+To build the app for production, run: 
 ```bash
 npm run build
 ```
